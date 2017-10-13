@@ -1,20 +1,161 @@
 <link rel="import" href="../polymer/polymer.html">
-
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <!--
 `oc-flash-payment`
-Element for making a flash payment to an organisation
+Element for handling flash payment to organisations.
 
 @demo demo/index.html
 -->
 
 <dom-module id="oc-flash-payment">
   <template>
-    <style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <style include="shop-button" is="custom-style">
+
       :host {
         display: block;
+        background: #BFD730;
+        color: #000;
       }
-    </style>
-    <h2>Hello [[prop1]]!</h2>
+
+        .image-link {
+          outline: none;§
+        }
+
+        .image-link > shop-image::after {
+          display: block;
+          content: '';
+          position: absolute;
+          transition-property: opacity;
+          transition-duration: 0s;
+          transition-delay: 90ms;
+          pointer-events: none;
+          opacity: 0;
+          top: 5px;
+          left: 5px;
+          right: 5px;
+          bottom: 5px;
+          outline: #2196F3 auto 5px;
+          outline: -moz-mac-focusring auto 5px;
+          outline: -webkit-focus-ring-color auto 5px;
+        }
+
+        .image-link:focus > shop-image::after {
+          opacity: 1;
+        }
+
+        .item {
+          display: block;
+          text-decoration: none;
+          text-align: center;
+          margin-bottom: 40px;
+        }
+
+        .item:nth-of-type(3),
+        .item:nth-of-type(4) {
+          display: inline-block;
+          width: 50%;
+        }
+
+        shop-image {
+          position: relative;
+          height: 320px;
+          overflow: hidden;
+          --shop-image-img: {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -9999px;
+            right: -9999px;
+            max-width: none;
+          };
+        }
+
+        h2 {
+          font-size: 1.3em;
+          font-weight: 500;
+          margin: 32px 0;
+        }
+
+        .item:nth-of-type(3) > h2,
+        .item:nth-of-type(4) > h2 {
+          font-size: 1.1em;
+        }
+
+        @media (max-width: 767px) {
+          shop-image {
+            height: 240px;
+          }
+
+          h2 {
+            margin: 24px 0;
+          }
+
+          .item:nth-of-type(3) > shop-button > a,
+          .item:nth-of-type(4) > shop-button > a {
+            padding: 8px 24px;
+          }
+        }
+        p {
+          color: #000 !important;
+        }
+        .white-bg {
+          background: #fff;
+        }
+      </style>
+
+
+
+
+  <div class="container-fluid">
+
+    <p>hello world</p>
+    <paper-material class="white-bg">
+      <form is="iron-form"
+        method="post"
+            disable-native-validation-ui
+            novalidate
+            id="paymentForm">
+    <div class="row">
+
+      <div class="col-xs-12">
+        <oc-accounts-api id="accountsApi"></oc-accounts-api>
+        <h5>Organisation Name</h5>
+        <p>Organisation ID</p>
+
+        <div class="row">
+          <div class="col-xs-12">
+            Accounts Dropdown List
+          </div>
+        </div>
+
+        <div class="row">
+
+          <div class="col-xs-12">
+            <paper-input always-float-label required label="Amount" type="number" name="amount" value="{{paymentData.amount}}"></paper-input>
+          </div>
+          <div class="col-xs-6">
+            Total
+          </div>
+          <div class="col-xs-6">
+            {{paymentData.amount}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-23">
+        <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
+      </div>
+    </div>
+    </form>
+
   </template>
 
   <script>
@@ -23,12 +164,52 @@ Element for making a flash payment to an organisation
       is: 'oc-flash-payment',
 
       properties: {
-        prop1: {
-          type: String,
-          value: 'oc-flash-payment',
+        properties: {
+          userId: {
+          type: Number,
+          value: OC.userId,
+          },
+          accountTypeId: Number,
+          organisationId: Number,
+          fromAccountId: {
+          type: Number,
+          value:240,
         },
+          amount: {
+            type: Number,
+            notify: true,
+
+          },
+
       },
+    },
+
+    listeners: {
+      'iron-form-presubmit':'_formHandler'
+    },
+
+    _formHandler : function(e) {
+      e.preventDefault();
+      var form = this.$.paymentForm;
+
+      if (form.validate()) {
+        var formData = form.serialize(),
+                paymentData = {};
+
+        var fromAccountId = 1;
+        paymentData.fromAccountId = fromAccountId;
+
+
+        amount = formData.amount;
+        this.fire('payAccount', paymentData);
+  }
+},
+
+      _submitForm : function(){
+        this.$.paymentForm.submit();
+      }
 
     });
+
   </script>
 </dom-module>

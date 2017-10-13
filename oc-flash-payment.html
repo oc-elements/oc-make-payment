@@ -113,8 +113,9 @@ Element for handling flash payment to organisations.
 
 
   <div class="container-fluid">
-
-    <p>hello world</p>
+    <paper-material class="white-bg">
+      <a href="/">Go back</a>
+    </paper-material>
     <paper-material class="white-bg">
       <form is="iron-form"
         method="post"
@@ -124,9 +125,9 @@ Element for handling flash payment to organisations.
     <div class="row">
 
       <div class="col-xs-12">
-        <oc-accounts-api id="accountsApi"></oc-accounts-api>
         <h5>Organisation Name</h5>
         <p>Organisation ID</p>
+        <p>[[paymentOrganisationId]]</p>
 
         <div class="row">
           <div class="col-xs-12">
@@ -150,7 +151,7 @@ Element for handling flash payment to organisations.
     </div>
 
     <div class="row">
-      <div class="col-xs-23">
+      <div class="col-xs-12">
         <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
       </div>
     </div>
@@ -163,26 +164,24 @@ Element for handling flash payment to organisations.
 
       is: 'oc-flash-payment',
 
-      properties: {
+
         properties: {
           userId: {
           type: Number,
           value: OC.userId,
           },
           accountTypeId: Number,
-          organisationId: Number,
-          fromAccountId: {
-          type: Number,
-          value:240,
-        },
+
+          paymentOrganisationId: Number,
+
           amount: {
             type: Number,
             notify: true,
+            },
 
           },
 
-      },
-    },
+
 
     listeners: {
       'iron-form-presubmit':'_formHandler'
@@ -199,15 +198,14 @@ Element for handling flash payment to organisations.
         var fromAccountId = 1;
         paymentData.fromAccountId = fromAccountId;
 
-
-        amount = formData.amount;
+        paymentData.amount = formData.amount;
         this.fire('payAccount', paymentData);
   }
 },
 
       _submitForm : function(){
         this.$.paymentForm.submit();
-      }
+      },
 
     });
 

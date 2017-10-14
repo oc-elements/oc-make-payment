@@ -167,8 +167,8 @@ Element for handling flash payment to organisations.
 
       is: 'oc-flash-payment',
         properties: {
-          userId: {
-          _type: Number,
+          _userId: {
+            type: Number,
             value: OC.userId
           },
           paymentData: {
@@ -194,7 +194,7 @@ Element for handling flash payment to organisations.
         var fromAccountId = 1;
         paymentData.fromAccountId = fromAccountId;
 
-        paymentData.amount = formData.amount;
+        _paymentData.amount = formData.amount;
         this.fire('payAccount', paymentData);
         }
       },

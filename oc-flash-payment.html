@@ -166,23 +166,16 @@ Element for handling flash payment to organisations.
     Polymer({
 
       is: 'oc-flash-payment',
-
-
         properties: {
           userId: {
-          type: Number,
-          value: OC.userId,
+          _type: Number,
+            value: OC.userId
           },
-          accountTypeId: Number,
-
-          paymentOrganisationId: Number,
-
-          amount: {
-            type: Number,
-            notify: true,
-            },
-
+          paymentData: {
+              type : Object
           },
+          paymentOrganisationId: Number
+        },
 
 
 
@@ -203,13 +196,8 @@ Element for handling flash payment to organisations.
 
         paymentData.amount = formData.amount;
         this.fire('payAccount', paymentData);
-  }
-},
-
-      _submitForm : function(){
-        this.$.paymentForm.submit();
+        }
       },
-
     });
 
   </script>

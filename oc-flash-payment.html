@@ -15,7 +15,7 @@ Element for handling flash payment to organisations.
 <dom-module id="oc-flash-payment">
   <template>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-      <style include="shop-button" is="custom-style">
+    <style include="shop-button" is="custom-style">
 
       :host {
         display: block;
@@ -23,182 +23,184 @@ Element for handling flash payment to organisations.
         color: #000;
       }
 
-        .image-link {
-          outline: none;
-        }
+      .image-link {
+        outline: none;
+      }
 
-        .image-link > shop-image::after {
-          display: block;
-          content: '';
+      .image-link > shop-image::after {
+        display: block;
+        content: '';
+        position: absolute;
+        transition-property: opacity;
+        transition-duration: 0s;
+        transition-delay: 90ms;
+        pointer-events: none;
+        opacity: 0;
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        outline: #2196F3 auto 5px;
+        outline: -moz-mac-focusring auto 5px;
+        outline: -webkit-focus-ring-color auto 5px;
+      }
+
+      .image-link:focus > shop-image::after {
+        opacity: 1;
+      }
+
+      .item {
+        display: block;
+        text-decoration: none;
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .item:nth-of-type(3),
+      .item:nth-of-type(4) {
+        display: inline-block;
+        width: 50%;
+      }
+
+      shop-image {
+        position: relative;
+        height: 320px;
+        overflow: hidden;
+        --shop-image-img: {
           position: absolute;
-          transition-property: opacity;
-          transition-duration: 0s;
-          transition-delay: 90ms;
-          pointer-events: none;
-          opacity: 0;
-          top: 5px;
-          left: 5px;
-          right: 5px;
-          bottom: 5px;
-          outline: #2196F3 auto 5px;
-          outline: -moz-mac-focusring auto 5px;
-          outline: -webkit-focus-ring-color auto 5px;
-        }
+          top: 0;
+          bottom: 0;
+          left: -9999px;
+          right: -9999px;
+          max-width: none;
+        };
+      }
 
-        .image-link:focus > shop-image::after {
-          opacity: 1;
-        }
+      h2 {
+        font-size: 1.3em;
+        font-weight: 500;
+        margin: 32px 0;
+      }
 
-        .item {
-          display: block;
-          text-decoration: none;
-          text-align: center;
-          margin-bottom: 40px;
-        }
+      .item:nth-of-type(3) > h2,
+      .item:nth-of-type(4) > h2 {
+        font-size: 1.1em;
+      }
 
-        .item:nth-of-type(3),
-        .item:nth-of-type(4) {
-          display: inline-block;
-          width: 50%;
-        }
-
+      @media (max-width: 767px) {
         shop-image {
-          position: relative;
-          height: 320px;
-          overflow: hidden;
-          --shop-image-img: {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: -9999px;
-            right: -9999px;
-            max-width: none;
-          };
+          height: 240px;
         }
 
         h2 {
-          font-size: 1.3em;
-          font-weight: 500;
-          margin: 32px 0;
+          margin: 24px 0;
         }
 
-        .item:nth-of-type(3) > h2,
-        .item:nth-of-type(4) > h2 {
-          font-size: 1.1em;
+        .item:nth-of-type(3) > shop-button > a,
+        .item:nth-of-type(4) > shop-button > a {
+          padding: 8px 24px;
         }
-
-        @media (max-width: 767px) {
-          shop-image {
-            height: 240px;
-          }
-
-          h2 {
-            margin: 24px 0;
-          }
-
-          .item:nth-of-type(3) > shop-button > a,
-          .item:nth-of-type(4) > shop-button > a {
-            padding: 8px 24px;
-          }
-        }
-        p {
-          color: #000 !important;
-        }
-        .white-bg {
-          background: #fff;
-        }
-      </style>
+      }
+      p {
+        color: #000 !important;
+      }
+      .white-bg {
+        background: #fff;
+      }
+    </style>
 
 
 
 
-  <div class="container-fluid">
-    <paper-material class="white-bg">
-      <a href="/">Go back</a>
-    </paper-material>
-    <paper-material class="white-bg">
-      <form is="iron-form"
-        method="post"
-            disable-native-validation-ui
-            novalidate
-            id="paymentForm">
+    <div class="container-fluid">
+      <paper-material class="white-bg">
+        <a href="/">Go back</a>
+      </paper-material>
+      <paper-material class="white-bg">
+        <form is="iron-form"
+              method="post"
+              disable-native-validation-ui
+              novalidate
+              id="paymentForm">
 
-    <div class="row">
+          <div class="row">
 
-      <div class="col-xs-12">
-        <h5>Organisation Name</h5>
-        <p>Organisation ID</p>
-        <p>[[paymentOrganisationId]]</p>
+            <div class="col-xs-12">
+              <h5>Organisation Name</h5>
+              <p>Organisation ID</p>
+              <p>[[paymentOrganisationId]]</p>
 
-        <div class="row">
-          <div class="col-xs-12">
-            Accounts Dropdown List
+              <div class="row">
+                <div class="col-xs-12">
+                  Accounts Dropdown List
+                </div>
+              </div>
+
+              <div class="row">
+
+                <div class="col-xs-12">
+                  <paper-input always-float-label required label="Amount" type="number" name="amount" value="{{_paymentData.amount}}"></paper-input>
+                </div>
+                <div class="col-xs-6">
+                  Total
+                </div>
+                <div class="col-xs-6">
+                  {{_paymentData.amount}}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="row">
-
-          <div class="col-xs-12">
-            <paper-input always-float-label required label="Amount" type="number" name="amount" value="{{paymentData.amount}}"></paper-input>
+          <div class="row">
+            <div class="col-xs-12">
+              <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
+            </div>
           </div>
-          <div class="col-xs-6">
-            Total
-          </div>
-          <div class="col-xs-6">
-            {{paymentData.amount}}
-          </div>
-        </div>
-      </div>
+        </form>
+      </paper-material>
     </div>
-
-    <div class="row">
-      <div class="col-xs-12">
-        <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
-      </div>
-    </div>
-    </form>
-    </paper-material>
-  </div>
 
   </template>
 
   <script>
-    Polymer({
+      Polymer({
 
       is: 'oc-flash-payment',
         properties: {
           _userId: {
-            type: Number,
+          type: Number,
             value: OC.userId
           },
-          paymentData: {
+          _paymentData: {
               type : Object
           },
           paymentOrganisationId: Number
-        },
 
 
 
+},
     listeners: {
       'iron-form-presubmit':'_formHandler'
     },
 
-    _formHandler : function(e) {
-      e.preventDefault();
-      var form = this.$.paymentForm;
+          _formHandler : function(e) {
+              e.preventDefault();
+              var form = this.$.paymentForm;
 
-      if (form.validate()) {
-        var formData = form.serialize(),
-                paymentData = {};
+              if (form.validate()) {
+                  var formData = form.serialize(),
+                      _paymentData = {};
 
-        var fromAccountId = 1;
-        paymentData.fromAccountId = fromAccountId;
+                  var fromAccountId = 1;
+                  _paymentData.fromAccountId = fromAccountId;
 
         _paymentData.amount = formData.amount;
-        this.fire('payAccount', paymentData);
+        this.fire('payAccount', _paymentData);
         }
       },
-    });
+    _submitForm : function(){
+              this.$.paymentForm.submit();
+          }});
 
   </script>
 </dom-module>

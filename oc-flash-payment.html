@@ -1,16 +1,7 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../paper-radio-button/paper-radio-button.html">
-<link rel="import" href="../iron-form/iron-form.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<!--
-`oc-flash-payment`
-Element for handling flash payment to organisations.
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../oc-core-utils/oc-core-utils.html">
 
-@demo demo/index.html
--->
 
 <dom-module id="oc-flash-payment">
   <template>
@@ -163,44 +154,60 @@ Element for handling flash payment to organisations.
   </template>
 
   <script>
-      Polymer({
+    /**
+     * `oc-flash-payment`
+     * Flash payment element
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class OcFlashPayment extends Polymer.Element {
+      static get is() { return 'oc-flash-payment'; }
+      static get properties() {
+        return {
+            _userId: {
+                type: Number,
+                value: OC.userId
+            },
+            _paymentData: {
+                type : Object
+            },
+            paymentOrganisationId: Number
+        };
+      }
 
-      is: 'oc-flash-payment',
-        properties: {
-          _userId: {
-          type: Number,
-            value: OC.userId
-          },
-          _paymentData: {
-              type : Object
-          },
-          paymentOrganisationId: Number
-
-
-
-},
-    listeners: {
-      'iron-form-presubmit':'_formHandler'
-    },
-
-          _formHandler : function(e) {
-              e.preventDefault();
-              var form = this.$.paymentForm;
-
-              if (form.validate()) {
-                  var formData = form.serialize(),
-                      _paymentData = {};
-
-                  var fromAccountId = 1;
-                  _paymentData.fromAccountId = fromAccountId;
-
-        _paymentData.amount = formData.amount;
-        this.fire('payAccount', _paymentData);
+        ready() {
+            super.ready();
+            this.addEventListener('iron-form-presubmit', (e) => this._formHandler(e));
         }
-      },
-    _submitForm : function(){
-              this.$.paymentForm.submit();
-          }});
 
+
+        _formHandler(e) {
+            e.preventDefault();
+            var form = this.$.paymentForm;
+
+            if (form.validate()) {
+                var formData = form.serialize(),
+                    _paymentData = {};
+
+                var fromAccountId = 1;
+                _paymentData.fromAccountId = fromAccountId;
+
+                _paymentData.amount = formData.amount;
+
+                this.dispatchEvent(new CustomEvent('payAccount', {
+                    bubbles: true, composed: true, detail:
+                        {paymentData: _paymentData}
+                }));
+            }
+        }
+
+        _submitForm(){
+            this.$.paymentForm.submit();
+        };
+    }
+
+    window.customElements.define(OcFlashPayment.is, OcFlashPayment);
   </script>
 </dom-module>

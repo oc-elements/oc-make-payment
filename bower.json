@@ -5,6 +5,7 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "iron-ajax": "PolymerElements/iron-ajax#^2.0.5",
+    "iron-form": "PolymerElements/iron-form#^2.0.1",
     "oc-core-utils": "git://github.com/oc-elements/oc-core-utils#2.x"
   },
   "devDependencies": {

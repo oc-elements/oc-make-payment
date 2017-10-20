@@ -225,7 +225,7 @@
         }
 
         _getUserAccounts() {
-            this.$.accountsApi.getUserAccounts(this._userId)
+            this.$.accountsApi.getUserAccounts(OC.userId)
                 .then(function(accountsRequest){
                     var accountsdata = accountsRequest.response.results;
                     this.accountsList = accountsdata;

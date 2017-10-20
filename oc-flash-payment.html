@@ -95,76 +95,73 @@
                     margin: 24px 0;
                 }
 
-        .item:nth-of-type(3) > shop-button > a,
-        .item:nth-of-type(4) > shop-button > a {
-          padding: 8px 24px;
-        }
-      }
-      p {
-        color: #000 !important;
-      }
-      .white-bg {
-        background: #fff;
-      }
-    </style>
-<oc-accounts-api id="accountsApi"></oc-accounts-api>
-    <div class="container-fluid">
-      <div>
+                .item:nth-of-type(3) > shop-button > a,
+                .item:nth-of-type(4) > shop-button > a {
+                    padding: 8px 24px;
+                }
+            }
+            p {
+                color: #000 !important;
+            }
+            .white-bg {
+                background: #fff;
+            }
+        </style>
+        <oc-accounts-api id="accountsApi"></oc-accounts-api>
+        <div class="container-fluid">
+            <div>
                 <paper-card>
-        <paper-button raised><a href="/">Go back</a></paper-button>
-      </paper-card>
-        </div>
+                    <paper-button raised><a href="/">Go back</a></paper-button>
+                </paper-card>
+            </div>
 
             <div>
-      <paper-card>
-        <iron-formid="paymentForm"
-              disable-native-validation-ui>
-              <form method="post"novalidate
-              >
-
-
+                <paper-card>
+                    <iron-form id="paymentForm"
+                               disable-native-validation-ui>
+                        <form method="post"novalidate>
                             <div class="col-xs-12">
                                 <h5>Organisation Name</h5>
                                 <p>Organisation ID</p>
                                 <p>[[paymentOrganisationId]]</p>
 
-              <div class="row">
-                <div class="col-xs-12">
-                    <paper-dropdown-menu label="Accounts">
-                        <paper-listbox slot="dropdown-content" selected="1">
-                            <template id="" is="dom-repeat" items="[[_accountsList]]"  selected={{accountSelected}}>
-                                <paper-item value="[[item.id]">[[item.accountType.label]] - [[item.name]]</paper-item>
-                            </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                </div>
-              </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <paper-dropdown-menu label="Accounts">
+                                            <paper-listbox slot="dropdown-content" selected="1">
+                                                <template id="" is="dom-repeat" items="[[_accountsList]]"  selected={{accountSelected}}>
+                                                    <paper-item value="[[item.id]">[[item.accountType.label]] - [[item.name]]</paper-item>
+                                                </template>
+                                            </paper-listbox>
+                                        </paper-dropdown-menu>
+                                    </div>
+                                </div>
 
-              <div class="row">
+                                <div class="row">
 
-                <div class="col-xs-12">
-                  <paper-input always-float-label required label="Amount" type="number" name="amount" value="{{_paymentData.amount}}"></paper-input>
-                </div>
-                <div class="col-xs-6">
-                  Total
-                </div>
-                <div class="col-xs-6">
-                  {{_paymentData.amount}}
-                </div>
-              </div>
-            </div>
+                                    <div class="col-xs-12">
+                                        <paper-input always-float-label required label="Amount" type="number" name="amount" value="{{_paymentData.amount}}"></paper-input>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        Total
+                                    </div>
+                                    <div class="col-xs-6">
+                                        {{_paymentData.amount}}
+                                    </div>
+                                </div>
+                            </div>
 
 
-          <div class="row">
-            <div class="col-xs-12">
-              <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
-            </div>
-          </div>
-        </form>
-      </iron-form>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
+                                </div>
+                            </div>
+                        </form>
+                    </iron-form>
                 </paper-card>
             </div>
-    </div>
+        </div>
 
     </template>
 

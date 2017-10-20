@@ -229,26 +229,6 @@
                     }
                 });
             }
-
-
-            _formHandler(e) {
-                e.preventDefault();
-                var form = this.$.paymentForm;
-
-                if (form.validate()) {
-                    var formData = form.serialize(),
-                        _paymentData = {};
-
-                    _paymentData.fromAccountId = this._accountSelected;
-                    _paymentData.amount = formData.amount;
-
-                    this.dispatchEvent(new CustomEvent('pay-account', {
-                        bubbles: true, composed: true, detail:
-                            {paymentData: _paymentData}
-                    }));
-                }
-            }
-
             _getUserAccounts() {
                 this.$.accountsApi.getUserAccounts(OC.userId)
                     .then(function(accountsRequest){

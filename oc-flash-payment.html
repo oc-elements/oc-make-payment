@@ -230,10 +230,10 @@
                 });
             }
             _getUserAccounts() {
-                this.$.accountsApi.getUserAccounts(OC.userId)
+                this.$.accountsApi.getUserAccounts(this._userId)
                     .then(function(accountsRequest){
                         var accountsdata = accountsRequest.response.results;
-                        this.accountsList = accountsdata;
+                        this._accountsList = accountsdata;
                     }.bind(this));
             }
 

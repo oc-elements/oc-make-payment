@@ -2,6 +2,9 @@
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-form/iron-form.html">
 <link rel="import" href="../oc-core-utils/oc-core-utils.html">
+<!-- Ensure Web Animations polyfill is loaded since neon-animation 2.0 doesn't import it -->
+<link rel="import" href="../../neon-animation/web-animations.html">
+<link rel="import" href="../paper-dropdown-menu.html">
 
 
 <dom-module id="oc-flash-payment">
@@ -105,6 +108,7 @@
       <paper-material class="white-bg">
         <a href="/">Go back</a>
       </paper-material>
+        <oc-accounts-api id="accountsApi"></oc-accounts-api>
       <paper-material class="white-bg">
         <form is="iron-form"
               method="post"
@@ -121,7 +125,13 @@
 
               <div class="row">
                 <div class="col-xs-12">
-                  Accounts Dropdown List
+                    <paper-dropdown-menu label="Accounts">
+                        <paper-listbox slot="dropdown-content" selected="1">
+                            <template id="" is="dom-repeat" items="[[_accountsList]]"  selected={{accountSelected}}>
+                                <paper-item value="[[item.id]">[[item.accountType.label]] - [[item.name]]</paper-item>
+                            </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
                 </div>
               </div>
 
@@ -171,15 +181,25 @@
             paymentData: {
                 type : Object
             },
-            paymentOrganisationId: Number
+            paymentOrganisationId: Number,
+            _accountList:{
+                type :Array
+            },
+            _accountSelected : {
+                type : String
+            }
         };
       }
 
         ready() {
             super.ready();
             this.addEventListener('iron-form-presubmit', (e) => this._formHandler(e));
+            this._init();
         }
 
+        _init() {
+            this._getUserAccounts();
+        }
 
         _formHandler(e) {
             e.preventDefault();
@@ -200,6 +220,15 @@
                 }));
             }
         }
+
+        _getUserAccounts() {
+            this.$.accountsApi.getUserAccounts(this._userId)
+                .then(function(accountsRequest){
+                    var accountsdata = accountsRequest.response.results;
+                    this.accountsList = accountsdata;
+                }.bind(this));
+        }
+
 
         _submitForm(){
             this.$.paymentForm.submit();

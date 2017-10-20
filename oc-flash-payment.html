@@ -5,7 +5,8 @@
 <!-- Ensure Web Animations polyfill is loaded since neon-animation 2.0 doesn't import it -->
 <link rel="import" href="../neon-animation/web-animations.html">
 <link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-listbox/paper-listbox.html">
 
@@ -106,20 +107,22 @@
         background: #fff;
       }
     </style>
-
+    <oc-accounts-api id="accountsApi"></oc-accounts-api>
     <div class="container-fluid">
-      <paper-material class="white-bg">
-        <a href="/">Go back</a>
-      </paper-material>
-        <oc-accounts-api id="accountsApi"></oc-accounts-api>
-      <paper-material class="white-bg">
-        <form is="iron-form"
-              method="post"
-              disable-native-validation-ui
-              novalidate
-              id="paymentForm">
+      <div>
+        <paper-card>
+          <paper-button raised><a href="/">Go back</a></paper-button>
+        </paper-card>
+      </div>
 
-          <div class="row">
+      <div>
+        <paper-card>
+          <form is="iron-form"
+                method="post"
+                disable-native-validation-ui
+                novalidate
+                id="paymentForm">
+
 
             <div class="col-xs-12">
               <h5>Organisation Name</h5>
@@ -128,18 +131,17 @@
 
               <div class="row">
                 <div class="col-xs-12">
-                    <paper-dropdown-menu label="Accounts">
-                        <paper-listbox slot="dropdown-content" selected="1">
-                            <template id="" is="dom-repeat" items="[[_accountsList]]"  selected={{accountSelected}}>
-                                <paper-item value="[[item.id]">[[item.accountType.label]] - [[item.name]]</paper-item>
-                            </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
+                  <paper-dropdown-menu label="Accounts">
+                    <paper-listbox slot="dropdown-content" selected="1">
+                      <template id="" is="dom-repeat" items="[[_accountsList]]"  selected={{accountSelected}}>
+                        <paper-item value="[[item.id]">[[item.accountType.label]] - [[item.name]]</paper-item>
+                      </template>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
                 </div>
               </div>
 
               <div class="row">
-
                 <div class="col-xs-12">
                   <paper-input always-float-label required label="Amount" type="number" name="amount" value="{{_paymentData.amount}}"></paper-input>
                 </div>
@@ -151,15 +153,15 @@
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="row">
-            <div class="col-xs-12">
-              <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
+            <div class="row">
+              <div class="col-xs-12">
+                <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
+              </div>
             </div>
-          </div>
-        </form>
-      </paper-material>
+          </form>
+        </paper-card>
+      </div>
     </div>
 
   </template>

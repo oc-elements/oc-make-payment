@@ -212,9 +212,7 @@
                 var formData = form.serialize(),
                     _paymentData = {};
 
-                var fromAccountId = 1;
-                _paymentData.fromAccountId = fromAccountId;
-
+                _paymentData.fromAccountId = this._accountSelected;
                 _paymentData.amount = formData.amount;
 
                 this.dispatchEvent(new CustomEvent('pay-account', {

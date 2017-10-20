@@ -125,16 +125,19 @@
                                 <p>Organisation ID</p>
                                 <p>[[paymentOrganisationId]]</p>
 
+
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        <paper-dropdown-menu label="Accounts">
-                                            <paper-listbox slot="dropdown-content" selected="1">
-                                                <template id="" is="dom-repeat" items="[[_accountsList]]"  selected={{accountSelected}}>
-                                                    <paper-item value="[[item.id]">[[item.accountType.label]] - [[item.name]]</paper-item>
+                                        <paper-dropdown-menu label="Accounts" >
+                                            <paper-listbox slot="dropdown-content" selected={{selectedIndex}} >
+                                                <template id="" is="dom-repeat" items="[[_accountsList]]" >
+                                                    <paper-item index="[[item.id]]" >[[item.accountType.label]] - [[item.name]]</paper-item>
                                                 </template>
                                             </paper-listbox>
                                         </paper-dropdown-menu>
                                     </div>
+                                    <paper-input   type="hidden" name="selectedId" value="[[selectedIndex]]"></paper-input>
+                                    <paper-input   type="hidden" name="accounts" value="[[_accountsList]]"></paper-input>
                                 </div>
 
                                 <div class="row">
@@ -186,11 +189,9 @@
                         type : Object
                     },
                     paymentOrganisationId: Number,
-                    _accountList:{
-                        type :Array
-                    },
-                    _accountSelected : {
-                        type : String
+                    _accountList: {
+                        type: Array,
+                        notify: true
                     }
                 };
             }
@@ -213,7 +214,7 @@
                         var formData = form.serializeForm(),
                             _paymentData = {};
 
-                        _paymentData.fromAccountId = this._accountSelected;
+                        _paymentData.fromAccountId =  formData.accounts[formData.selectedId].id
                         _paymentData.amount = formData.amount;
 
                         this.dispatchEvent(new CustomEvent('pay-account', {

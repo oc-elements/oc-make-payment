@@ -103,6 +103,9 @@
             p {
                 color: #000 !important;
             }
+            .error{
+                color: #FF0000! important;
+            }
             .white-bg {
                 background: #fff;
             }
@@ -118,9 +121,14 @@
             <div>
                 <paper-card>
                     <div class="col-xs-12">
-                        <h5>[[organisation.name]]</h5>
-                        <p>Organisation ID</p>
-                        <p>[[paymentOrganisationId]]</p>
+                        <h5>Pay [[organisation.name]]</h5>
+                        <template is="dom-if" if="[[error.isError]]" >
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <p class="error"><b>Payment Failed!</b> - [[error.message]]</p>
+                                </div>
+                            </div>
+                        </template>
                         <div class="row">
                             <div class="col-xs-12">
                                 <paper-dropdown-menu label="Accounts" >
@@ -134,14 +142,19 @@
                         </div>
                         <div class="row">
                             <div class="col-xs-12">
-                                <paper-input id="ammount"
+                                <paper-input id="amount"
                                              always-float-label
                                              required
                                              label="Amount"
                                              type="number"
                                              name="amount"
                                              prevent-invalid-input
-                                             value="{{_paymentData.amount}}">
+                                             value="{{_paymentData.amount}}"
+                                             allowed-pattern="[.\d]"
+                                             pattern="[.\d]"
+                                             min=0.01
+                                             step=0.01
+                                             error="Not valid amount">
                                 </paper-input>
                             </div>
                             <div class="col-xs-6">
@@ -154,7 +167,7 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
-                            <paper-button id="submit" raised class="primary" on-click="_submit" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
+                            <paper-button id="submit" raised class="primary" on-click="_submit" disabled$="{{_loading}}">Pay</paper-button>
                         </div>
                     </div>
                 </paper-card>
@@ -180,8 +193,9 @@
                         type: Number,
                         value: OC.identity.userId
                     },
-                    paymentData: {
-                        type : Object
+                    _paymentData: {
+                        type : Object,
+                        value: {}
                     },
                     organisation: Object,
                     _accountList: {
@@ -191,6 +205,12 @@
                     _loading: {
                         type: Boolean,
                         value: false,
+                        notify: true
+                    },
+                    //if the payment failed
+                    error: {
+                        type: Object,
+                        value: {"isError":false},
                         notify: true
                     }
                 };
@@ -210,15 +230,15 @@
                 if (!this.$.submit.disabled
                     && this.$.amount.validate()
                     && this._accountsList.length > 0
-                    && this._paymentData._selectedId > 0) {
+                    && this._paymentData.selectedIndex >= 0) {
 
                     //disables the button
                     this._loading = true;
 
                     //build the data for the api call
                     let data = {};
-                    data.fromAccountId = this._accountsList[this._paymentData._selectedId].id;
-                    data.ammount = this._paymentData.ammount;
+                    data.fromAccountId = this._accountsList[this._paymentData.selectedIndex].id;
+                    data.amount = this._paymentData.amount;
 
 
                     this.dispatchEvent(new CustomEvent('pay-account', {

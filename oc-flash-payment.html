@@ -241,6 +241,9 @@
                     data.amount = this._paymentData.amount;
 
 
+                    //clear the error
+                    this.setProperties({error: {"isError":false}});
+
                     this.dispatchEvent(new CustomEvent('pay-account', {
                             bubbles: true,
                             composed: true,

@@ -1,14 +1,26 @@
 {
-  "name": "oc-payment-api",
-  "description": "Element for consuming the payment API",
-  "main": "oc-payment-api.html",
+  "name": "oc-flash-payment",
+  "description": "Flash payment element",
+  "main": "oc-flash-payment.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.4.0"
+    "polymer": "Polymer/polymer#^2.0.0",
+    "iron-form": "PolymerElements/iron-form#^2.0.1",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^2.0.0",
+    "neon-animation": "PolymerElements/neon-animation#^2.0.1",
+    "oc-accounts-api": "git://github.com/oc-elements/oc-accounts-api#2.x",
+    "paper-item": "PolymerElements/paper-item#^2.0.0",
+    "paper-listbox": "PolymerElements/paper-listbox#^2.0.0",
+    "web-animations-js": "web-animations/web-animations-js#^2.2"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
-    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
-    "web-component-tester": "^6.0.0-prerelease.5",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0",
+    "iron-location": "1 - 2",
+    "webcomponentsjs": "^v1.0.2",
+    "iron-ajax": "^2.0.5"
   }
 }

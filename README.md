@@ -1,6 +1,6 @@
 # \<oc-flash-payment\>
 
-Element for making a flash payment to an organisation
+Flash payment element
 
 ## Install the Polymer-CLI
 

@@ -1,204 +1,246 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-form/iron-form.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<!--
-`oc-flash-payment`
-Element for handling flash payment to organisations.
+<link rel="import" href="../oc-core-utils/oc-core-utils.html">
+<!-- Ensure Web Animations polyfill is loaded since neon-animation 2.0 doesn't import it -->
+<link rel="import" href="../neon-animation/web-animations.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
 
-@demo demo/index.html
--->
 
 <dom-module id="oc-flash-payment">
-  <template>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-      <style include="shop-button" is="custom-style">
+    <template>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <style include="shop-button" is="custom-style">
 
-      :host {
-        display: block;
-        background: #BFD730;
-        color: #000;
-      }
+            :host {
+                display: block;
+                background: #BFD730;
+                color: #000;
+            }
 
-        .image-link {
-          outline: none;
-        }
+            .image-link {
+                outline: none;
+            }
 
-        .image-link > shop-image::after {
-          display: block;
-          content: '';
-          position: absolute;
-          transition-property: opacity;
-          transition-duration: 0s;
-          transition-delay: 90ms;
-          pointer-events: none;
-          opacity: 0;
-          top: 5px;
-          left: 5px;
-          right: 5px;
-          bottom: 5px;
-          outline: #2196F3 auto 5px;
-          outline: -moz-mac-focusring auto 5px;
-          outline: -webkit-focus-ring-color auto 5px;
-        }
+            .image-link > shop-image::after {
+                display: block;
+                content: '';
+                position: absolute;
+                transition-property: opacity;
+                transition-duration: 0s;
+                transition-delay: 90ms;
+                pointer-events: none;
+                opacity: 0;
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                bottom: 5px;
+                outline: #2196F3 auto 5px;
+                outline: -moz-mac-focusring auto 5px;
+                outline: -webkit-focus-ring-color auto 5px;
+            }
 
-        .image-link:focus > shop-image::after {
-          opacity: 1;
-        }
+            .image-link:focus > shop-image::after {
+                opacity: 1;
+            }
 
-        .item {
-          display: block;
-          text-decoration: none;
-          text-align: center;
-          margin-bottom: 40px;
-        }
+            .item {
+                display: block;
+                text-decoration: none;
+                text-align: center;
+                margin-bottom: 40px;
+            }
 
-        .item:nth-of-type(3),
-        .item:nth-of-type(4) {
-          display: inline-block;
-          width: 50%;
-        }
+            .item:nth-of-type(3),
+            .item:nth-of-type(4) {
+                display: inline-block;
+                width: 50%;
+            }
 
-        shop-image {
-          position: relative;
-          height: 320px;
-          overflow: hidden;
-          --shop-image-img: {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: -9999px;
-            right: -9999px;
-            max-width: none;
-          };
-        }
+            shop-image {
+                position: relative;
+                height: 320px;
+                overflow: hidden;
+                --shop-image-img: {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: -9999px;
+                    right: -9999px;
+                    max-width: none;
+                };
+            }
 
-        h2 {
-          font-size: 1.3em;
-          font-weight: 500;
-          margin: 32px 0;
-        }
+            h2 {
+                font-size: 1.3em;
+                font-weight: 500;
+                margin: 32px 0;
+            }
 
-        .item:nth-of-type(3) > h2,
-        .item:nth-of-type(4) > h2 {
-          font-size: 1.1em;
-        }
+            .item:nth-of-type(3) > h2,
+            .item:nth-of-type(4) > h2 {
+                font-size: 1.1em;
+            }
 
-        @media (max-width: 767px) {
-          shop-image {
-            height: 240px;
-          }
+            @media (max-width: 767px) {
+                shop-image {
+                    height: 240px;
+                }
 
-          h2 {
-            margin: 24px 0;
-          }
+                h2 {
+                    margin: 24px 0;
+                }
 
-          .item:nth-of-type(3) > shop-button > a,
-          .item:nth-of-type(4) > shop-button > a {
-            padding: 8px 24px;
-          }
-        }
-        p {
-          color: #000 !important;
-        }
-        .white-bg {
-          background: #fff;
-        }
-      </style>
+                .item:nth-of-type(3) > shop-button > a,
+                .item:nth-of-type(4) > shop-button > a {
+                    padding: 8px 24px;
+                }
+            }
+            p {
+                color: #000 !important;
+            }
+            .white-bg {
+                background: #fff;
+            }
+        </style>
+        <oc-accounts-api id="accountsApi"></oc-accounts-api>
+        <div class="container-fluid">
+            <div>
+                <paper-card>
+                    <paper-button raised><a href="/">Go back</a></paper-button>
+                </paper-card>
+            </div>
 
-
-
-
-  <div class="container-fluid">
-    <paper-material class="white-bg">
-      <a href="/">Go back</a>
-    </paper-material>
-    <paper-material class="white-bg">
-      <form is="iron-form"
-        method="post"
-            disable-native-validation-ui
-            novalidate
-            id="paymentForm">
-
-    <div class="row">
-
-      <div class="col-xs-12">
-        <h5>Organisation Name</h5>
-        <p>Organisation ID</p>
-        <p>[[paymentOrganisationId]]</p>
-
-        <div class="row">
-          <div class="col-xs-12">
-            Accounts Dropdown List
-          </div>
+            <div>
+                <paper-card>
+                    <div class="col-xs-12">
+                        <h5>[[organisation.name]]</h5>
+                        <p>Organisation ID</p>
+                        <p>[[paymentOrganisationId]]</p>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <paper-dropdown-menu label="Accounts" >
+                                    <paper-listbox id="accountId" slot="dropdown-content" selected={{_paymentData.selectedIndex}} >
+                                        <template is="dom-repeat" items="[[_accountsList]]" >
+                                            <paper-item index="[[item.id]]" >[[item.accountType.label]] - [[item.name]]</paper-item>
+                                        </template>
+                                    </paper-listbox>
+                                </paper-dropdown-menu>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <paper-input id="ammount"
+                                             always-float-label
+                                             required
+                                             label="Amount"
+                                             type="number"
+                                             name="amount"
+                                             prevent-invalid-input
+                                             value="{{_paymentData.amount}}">
+                                </paper-input>
+                            </div>
+                            <div class="col-xs-6">
+                                Total
+                            </div>
+                            <div class="col-xs-6">
+                                {{_paymentData.amount}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <paper-button id="submit" raised class="primary" on-click="_submit" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
+                        </div>
+                    </div>
+                </paper-card>
+            </div>
         </div>
 
-        <div class="row">
+    </template>
 
-          <div class="col-xs-12">
-            <paper-input always-float-label required label="Amount" type="number" name="amount" value="{{paymentData.amount}}"></paper-input>
-          </div>
-          <div class="col-xs-6">
-            Total
-          </div>
-          <div class="col-xs-6">
-            {{paymentData.amount}}
-          </div>
-        </div>
-      </div>
-    </div>
+    <script>
+        /**
+         * `oc-flash-payment`
+         * Flash payment element
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class OcFlashPayment extends Polymer.Element {
+            static get is() { return 'oc-flash-payment'; }
+            static get properties() {
+                return {
+                    _userId: {
+                        type: Number,
+                        value: OC.identity.userId
+                    },
+                    paymentData: {
+                        type : Object
+                    },
+                    organisation: Object,
+                    _accountList: {
+                        type: Array,
+                        notify: true
+                    },
+                    _loading: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    }
+                };
+            }
 
-    <div class="row">
-      <div class="col-xs-12">
-        <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
-      </div>
-    </div>
-    </form>
-    </paper-material>
-  </div>
+            ready() {
+                super.ready();
+                this._init();
+            }
 
-  </template>
+            _init() {
+                this._getUserAccounts();
+            }
 
-  <script>
-    Polymer({
+            _submit() {
 
-      is: 'oc-flash-payment',
-        properties: {
-          _userId: {
-            type: Number,
-            value: OC.userId
-          },
-          paymentData: {
-              type : Object
-          },
-          paymentOrganisationId: Number
-        },
+                if (!this.$.submit.disabled
+                    && this.$.amount.validate()
+                    && this._accountsList.length > 0
+                    && this._paymentData._selectedId > 0) {
+
+                    //disables the button
+                    this._loading = true;
+
+                    //build the data for the api call
+                    let data = {};
+                    data.fromAccountId = this._accountsList[this._paymentData._selectedId].id;
+                    data.ammount = this._paymentData.ammount;
 
 
+                    this.dispatchEvent(new CustomEvent('pay-account', {
+                            bubbles: true,
+                            composed: true,
+                            detail: {paymentData: data}
+                        })
+                    );
 
-    listeners: {
-      'iron-form-presubmit':'_formHandler'
-    },
+                    //disables the button
+                    this._loading = false;
+                }
+            }
 
-    _formHandler : function(e) {
-      e.preventDefault();
-      var form = this.$.paymentForm;
-
-      if (form.validate()) {
-        var formData = form.serialize(),
-                paymentData = {};
-
-        var fromAccountId = 1;
-        paymentData.fromAccountId = fromAccountId;
-
-        _paymentData.amount = formData.amount;
-        this.fire('payAccount', paymentData);
+            _getUserAccounts() {
+                this.$.accountsApi.getUserAccounts(this._userId)
+                    .then(function(accountsRequest){
+                        this._accountsList = accountsRequest.response.results;
+                    }.bind(this));
+            }
         }
-      },
-    });
 
-  </script>
+        window.customElements.define(OcFlashPayment.is, OcFlashPayment);
+    </script>
 </dom-module>

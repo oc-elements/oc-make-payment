@@ -117,51 +117,46 @@
 
             <div>
                 <paper-card>
-                    <iron-form id="paymentForm"
-                               disable-native-validation-ui>
-                        <form method="post"novalidate>
+                    <div class="col-xs-12">
+                        <h5>[[organisation.name]]</h5>
+                        <p>Organisation ID</p>
+                        <p>[[paymentOrganisationId]]</p>
+                        <div class="row">
                             <div class="col-xs-12">
-                                <h5>Organisation Name</h5>
-                                <p>Organisation ID</p>
-                                <p>[[paymentOrganisationId]]</p>
-
-
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <paper-dropdown-menu label="Accounts" >
-                                            <paper-listbox slot="dropdown-content" selected={{selectedIndex}} >
-                                                <template id="" is="dom-repeat" items="[[_accountsList]]" >
-                                                    <paper-item index="[[item.id]]" >[[item.accountType.label]] - [[item.name]]</paper-item>
-                                                </template>
-                                            </paper-listbox>
-                                        </paper-dropdown-menu>
-                                    </div>
-                                    <paper-input   type="hidden" name="selectedId" value="[[selectedIndex]]"></paper-input>
-                                    <paper-input   type="hidden" name="accounts" value="[[_accountsList]]"></paper-input>
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="col-xs-12">
-                                        <paper-input always-float-label required label="Amount" type="number" name="amount" value="{{_paymentData.amount}}"></paper-input>
-                                    </div>
-                                    <div class="col-xs-6">
-                                        Total
-                                    </div>
-                                    <div class="col-xs-6">
-                                        {{_paymentData.amount}}
-                                    </div>
-                                </div>
+                                <paper-dropdown-menu label="Accounts" >
+                                    <paper-listbox id="accountId" slot="dropdown-content" selected={{_paymentData.selectedIndex}} >
+                                        <template is="dom-repeat" items="[[_accountsList]]" >
+                                            <paper-item index="[[item.id]]" >[[item.accountType.label]] - [[item.name]]</paper-item>
+                                        </template>
+                                    </paper-listbox>
+                                </paper-dropdown-menu>
                             </div>
-
-
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <paper-button raised class="primary" on-click="_submitForm" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
-                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <paper-input id="ammount"
+                                             always-float-label
+                                             required
+                                             label="Amount"
+                                             type="number"
+                                             name="amount"
+                                             prevent-invalid-input
+                                             value="{{_paymentData.amount}}">
+                                </paper-input>
                             </div>
-                        </form>
-                    </iron-form>
+                            <div class="col-xs-6">
+                                Total
+                            </div>
+                            <div class="col-xs-6">
+                                {{_paymentData.amount}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <paper-button id="submit" raised class="primary" on-click="_submit" disabled$="{{loading}}"><a href="#">Pay</a></paper-button>
+                        </div>
+                    </div>
                 </paper-card>
             </div>
         </div>
@@ -183,14 +178,19 @@
                 return {
                     _userId: {
                         type: Number,
-                        value: OC.userId
+                        value: OC.identity.userId
                     },
                     paymentData: {
                         type : Object
                     },
-                    paymentOrganisationId: Number,
+                    organisation: Object,
                     _accountList: {
                         type: Array,
+                        notify: true
+                    },
+                    _loading: {
+                        type: Boolean,
+                        value: false,
                         notify: true
                     }
                 };
@@ -205,40 +205,40 @@
                 this._getUserAccounts();
             }
 
-            connectedCallback() {
-                super.connectedCallback();
-                const form = this.$.paymentForm;
-                form.addEventListener('iron-form-presubmit', function (event) {
-                    event.preventDefault();
-                    if (form.validate()) {
-                        var formData = form.serializeForm(),
-                            _paymentData = {};
+            _submit() {
 
-                        _paymentData.fromAccountId =  formData.accounts[formData.selectedId].id
-                        _paymentData.amount = formData.amount;
+                if (!this.$.submit.disabled
+                    && this.$.amount.validate()
+                    && this._accountsList.length > 0
+                    && this._paymentData._selectedId > 0) {
 
-                        this.dispatchEvent(new CustomEvent('pay-account', {
-                            bubbles: true, composed: true, detail:
-                                {paymentData: _paymentData}
-                        }));
-                    }else{
-                        this.dispatchEvent(new CustomEvent('announce', {bubbles: true, composed: true,
-                            detail: "Failed to make payment"}));
-                    }
-                });
+                    //disables the button
+                    this._loading = true;
+
+                    //build the data for the api call
+                    let data = {};
+                    data.fromAccountId = this._accountsList[this._paymentData._selectedId].id;
+                    data.ammount = this._paymentData.ammount;
+
+
+                    this.dispatchEvent(new CustomEvent('pay-account', {
+                            bubbles: true,
+                            composed: true,
+                            detail: {paymentData: data}
+                        })
+                    );
+
+                    //disables the button
+                    this._loading = false;
+                }
             }
+
             _getUserAccounts() {
                 this.$.accountsApi.getUserAccounts(this._userId)
                     .then(function(accountsRequest){
-                        var accountsdata = accountsRequest.response.results;
-                        this._accountsList = accountsdata;
+                        this._accountsList = accountsRequest.response.results;
                     }.bind(this));
             }
-
-
-            _submitForm(){
-                this.$.paymentForm.submit();
-            };
         }
 
         window.customElements.define(OcFlashPayment.is, OcFlashPayment);

@@ -1,7 +1,7 @@
 {
-  "name": "oc-flash-payment",
+  "name": "oc-make-payment",
   "description": "Flash payment element",
-  "main": "oc-flash-payment.html",
+  "main": "oc-make-payment.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "iron-form": "PolymerElements/iron-form#^2.0.1",

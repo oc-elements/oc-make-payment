@@ -11,7 +11,7 @@
 <link rel="import" href="../paper-listbox/paper-listbox.html">
 
 
-<dom-module id="oc-flash-payment">
+<dom-module id="oc-make-payment">
     <template>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <style include="shop-button" is="custom-style">
@@ -116,15 +116,15 @@
 
     <script>
         /**
-         * `oc-flash-payment`
+         * `oc-make-payment`
          * Flash payment element
          *
          * @customElement
          * @polymer
          * @demo demo/index.html
          */
-        class OcFlashPayment extends Polymer.Element {
-            static get is() { return 'oc-flash-payment'; }
+        class OcMakePayment extends Polymer.Element {
+            static get is() { return 'oc-make-payment'; }
             static get properties() {
                 return {
                     _userId: {
@@ -202,6 +202,6 @@
             }
         }
 
-        window.customElements.define(OcFlashPayment.is, OcFlashPayment);
+        window.customElements.define(OcMakePayment.is, OcMakePayment);
     </script>
 </dom-module>

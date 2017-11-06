@@ -18,155 +18,99 @@
 
             :host {
                 display: block;
-                background: #BFD730;
+                background: #ffffff;
                 color: #000;
             }
-
-            .image-link {
-                outline: none;
+            .category-heading {
+                border-top: 1px #cecece solid;
+                border-bottom: 1px #cecece solid;
+                background: #f8f8f8;
+                color: #000;
+            }
+            h3 {
+                font-size:1.13em !important;
+                margin: 10px 0 !important;
             }
 
-            .image-link > shop-image::after {
-                display: block;
-                content: '';
-                position: absolute;
-                transition-property: opacity;
-                transition-duration: 0s;
-                transition-delay: 90ms;
-                pointer-events: none;
-                opacity: 0;
-                top: 5px;
-                left: 5px;
-                right: 5px;
-                bottom: 5px;
-                outline: #2196F3 auto 5px;
-                outline: -moz-mac-focusring auto 5px;
-                outline: -webkit-focus-ring-color auto 5px;
+            .add-button-row {
+                background: #ffffff;
+                margin: 15px 0;
+            }
+            .add-button {
+                width: 100%;
+                color: #fff;
+                background: #2BB673;
             }
 
-            .image-link:focus > shop-image::after {
-                opacity: 1;
+            .full-width {
+                width:100%;
             }
-
-            .item {
-                display: block;
-                text-decoration: none;
-                text-align: center;
-                margin-bottom: 40px;
-            }
-
-            .item:nth-of-type(3),
-            .item:nth-of-type(4) {
-                display: inline-block;
-                width: 50%;
-            }
-
-            shop-image {
-                position: relative;
-                height: 320px;
-                overflow: hidden;
-                --shop-image-img: {
-                    position: absolute;
-                    top: 0;
-                    bottom: 0;
-                    left: -9999px;
-                    right: -9999px;
-                    max-width: none;
-                };
-            }
-
-            h2 {
-                font-size: 1.3em;
-                font-weight: 500;
-                margin: 32px 0;
-            }
-
-            .item:nth-of-type(3) > h2,
-            .item:nth-of-type(4) > h2 {
-                font-size: 1.1em;
-            }
-
-            @media (max-width: 767px) {
-                shop-image {
-                    height: 240px;
-                }
-
-                h2 {
-                    margin: 24px 0;
-                }
-
-                .item:nth-of-type(3) > shop-button > a,
-                .item:nth-of-type(4) > shop-button > a {
-                    padding: 8px 24px;
-                }
-            }
-            p {
-                color: #000 !important;
-            }
-            .error{
-                color: #FF0000! important;
-            }
-            .white-bg {
-                background: #fff;
+            paper-dropdown-menu {
+                width:100%;
             }
         </style>
         <oc-accounts-api id="accountsApi"></oc-accounts-api>
         <div class="container-fluid">
-            <div>
-                <paper-card>
-                    <paper-button raised><a href="/">Go back</a></paper-button>
-                </paper-card>
+            <div class="row">
+                <div class="col-xs-12 category-heading">
+                    <h3>Pay [[organisation.name]]</h3>
+                </div>
             </div>
-
-            <div>
-                <paper-card>
+            <template is="dom-if" if="[[error.isError]]" >
+                <div class="row">
                     <div class="col-xs-12">
-                        <h5>Pay [[organisation.name]]</h5>
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <paper-dropdown-menu label="Accounts" >
-                                    <paper-listbox id="accountId" slot="dropdown-content" selected={{_paymentData.selectedIndex}} >
-                                        <template is="dom-repeat" items="[[_accountsList]]" >
-                                            <paper-item index="[[item.id]]" >[[item.accountType.label]] - [[item.name]]</paper-item>
-                                        </template>
-                                    </paper-listbox>
-                                </paper-dropdown-menu>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <paper-input id="amount"
-                                             always-float-label
-                                             required
-                                             label="Amount"
-                                             type="number"
-                                             name="amount"
-                                             prevent-invalid-input
-                                             value="{{_paymentData.amount}}"
-                                             allowed-pattern="[.\d]"
-                                             pattern="[.\d]"
-                                             min=0.01
-                                             step=0.01
-                                             error="Not valid amount">
-                                </paper-input>
-                            </div>
-                            <div class="col-xs-6">
-                                Total
-                            </div>
-                            <div class="col-xs-6">
-                                {{_paymentData.amount}}
-                            </div>
-                        </div>
+                        <p class="error"><b>Payment Failed!</b> - [[error.message]]</p>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <paper-button id="submit" raised class="primary" on-click="_submit" disabled$="{{_loading}}">Pay</paper-button>
-                        </div>
-                    </div>
-                </paper-card>
+                </div>
+            </template>
+            <div class="row">
+                <div class="col-xs-12">
+                    <paper-dropdown-menu label="From Account" >
+                        <paper-listbox id="accountId"
+                                       slot="dropdown-content"
+                                       selected={{_paymentData.selectedIndex}} >
+                            <template is="dom-repeat" items="[[_accountsList]]" >
+                                <paper-item index="[[item.id]]" >[[_capatalize(item.method)]] - [[item.name]]</paper-item>
+                            </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <paper-input id="amount"
+                                 always-float-label
+                                 required
+                                 label="Amount"
+                                 type="number"
+                                 name="amount"
+                                 prevent-invalid-input
+                                 value="{{_paymentData.amount}}"
+                                 allowed-pattern="[.\d]"
+                                 pattern="[.\d]"
+                                 min=0.01
+                                 step=0.01
+                                 error="Not valid amount">
+                    </paper-input>
+                </div>
+                <div class="col-xs-6">
+                    Total:
+                </div>
+                <div class="col-xs-6">
+                    R {{_paymentData.amount}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 text-center add-button-row">
+                    <paper-button id="submit" class="primary add-button" on-click="_submit" disabled$="{{_loading}}">Pay</paper-button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 category-heading text-center">
+                    <a href="/"><paper-button class="full-width" disabled$="{{_loading}}">Go Back</paper-button></a>
+                </div>
             </div>
         </div>
-
     </template>
 
     <script>
@@ -233,6 +177,8 @@
                     data.fromAccountId = this._accountsList[this._paymentData.selectedIndex].id;
                     data.amount = this._paymentData.amount;
 
+                    //passing the type along too know if should display otp page
+                    data.method = this._accountsList[this._paymentData.selectedIndex].method;
 
                     this.dispatchEvent(new CustomEvent('pay-account', {
                             bubbles: true,
@@ -251,6 +197,12 @@
                     .then(function(accountsRequest){
                         this._accountsList = accountsRequest.response.results;
                     }.bind(this));
+            }
+
+            //Capatalizes a string
+            _capatalize(string){
+                return String(string).charAt(0).toUpperCase() + string.slice(1);
+
             }
         }
 

@@ -129,7 +129,8 @@
                 return {
                     _userId: {
                         type: Number,
-                        statePath:  'user.user.id'
+                        statePath:  'user.user.id',
+                        observer: '_getUserAccounts'
                     },
                     _paymentData: {
                         type : Object,
@@ -160,7 +161,6 @@
             }
 
             _init() {
-                this._getUserAccounts();
             }
 
             _submit() {
@@ -196,11 +196,13 @@
                 }
             }
 
-            _getUserAccounts() {
-                this.$.accountsApi.getUserAccounts(this._userId)
-                    .then(function(accountsRequest){
-                        this._accountsList = accountsRequest.response.results;
-                    }.bind(this));
+            _getUserAccounts(userId) {
+                if(userId) {
+                    this.$.accountsApi.getUserAccounts(userId)
+                        .then(function (accountsRequest) {
+                            this._accountsList = accountsRequest.response.results;
+                        }.bind(this));
+                }
             }
 
             //Capatalizes a string

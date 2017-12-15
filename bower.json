@@ -10,6 +10,7 @@
     "oc-accounts-api": "git://github.com/oc-elements/oc-accounts-api#2.x",
     "paper-item": "PolymerElements/paper-item#^2.0.0",
     "paper-listbox": "PolymerElements/paper-listbox#^2.0.0",
+    "oc-core-utils" : "git://github.com/oc-elements/oc-core-utils#2.x",
     "web-animations-js": "web-animations/web-animations-js#^2.2"
   },
   "devDependencies": {

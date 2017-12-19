@@ -108,7 +108,7 @@
             </div>
             <div class="row">
                 <div class="col-xs-12 category-heading text-center">
-                    <a href="/"><paper-button class="full-width" disabled$="{{_loading}}">Go Back</paper-button></a>
+                    <a href$="{{goBackUrl}}"><paper-button class="full-width" disabled$="{{_loading}}">Go Back</paper-button></a>
                 </div>
             </div>
         </div>
@@ -151,7 +151,11 @@
                         type: Object,
                         value: {"isError":false},
                         notify: true
-                    }
+                    },
+					goBackUrl: {
+						type: String,
+						value: "/"
+					}
                 };
             }
 

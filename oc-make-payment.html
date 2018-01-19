@@ -132,9 +132,18 @@
                         statePath:  'identity.user.id',
                         observer: '_getUserAccounts'
                     },
+                    _organisationId: {
+                        type: Number,
+                        notify: true,
+                        statePath: 'organisation.id',
+                        observer: '_getOrganisationAccounts'
+                    },
                     _paymentData: {
                         type : Object,
                         value: {}
+                    },
+                    _toOrganisationId: {
+                        type: Number
                     },
                     organisation: Object,
                     _accountList: {
@@ -161,6 +170,7 @@
             }
 
             _init() {
+                this._getOrganisationAccounts();
             }
 
             _submit() {
@@ -177,6 +187,9 @@
                     let data = {};
                     data.fromAccountId = this._accountsList[this._paymentData.selectedIndex].id;
                     data.amount = this._paymentData.amount;
+
+                    //passing the type along too know if should display otp page
+                    data.toOrganisationId = this.organisation.id;
 
                     //passing the type along too know if should display otp page
                     data.method = this._accountsList[this._paymentData.selectedIndex].method;
@@ -196,9 +209,9 @@
                 }
             }
 
-            _getUserAccounts(userId) {
-                if(userId) {
-                    this.$.accountsApi.getUserAccounts(userId)
+            _getOrganisationAccounts(organisationId) {
+                if(this._organisationId) {
+                    this.$.accountsApi.getOrganisationAccounts(organisationId)
                         .then(function (accountsRequest) {
                             this._accountsList = accountsRequest.response.results;
                         }.bind(this));

@@ -84,6 +84,7 @@
                                  required
                                  label="Amount"
                                  type="number"
+                                 inputmode="numeric"
                                  name="amount"
                                  prevent-invalid-input
                                  value="{{_paymentData.amount}}"
@@ -226,5 +227,5 @@
         }
 
         window.customElements.define(OcMakePayment.is, OcMakePayment);
-    </script>
+    </script> 
 </dom-module>

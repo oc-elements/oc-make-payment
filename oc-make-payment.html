@@ -215,7 +215,7 @@
 
             _getOrganisationAccounts(organisationId) {
                 if(this._organisationId) {
-                    this.$.accountsApi.getOrganisationAccounts(organisationId)
+                    this.$.accountsApi.getOrganisationAccounts(organisationId, 'withdraw')
                         .then(function (accountsRequest) {
                             this._accountsList = accountsRequest.response.results;
                         }.bind(this));

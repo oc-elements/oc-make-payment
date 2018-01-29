@@ -66,12 +66,12 @@
             </template>
             <div class="row">
                 <div class="col-xs-12">
-                    <paper-dropdown-menu label="From Account" >
+                    <paper-dropdown-menu label="From Account">
                         <paper-listbox id="accountId"
                                        slot="dropdown-content"
-                                       selected={{_paymentData.selectedIndex}} >
+                                       selected="{{_selectedAccountId}}" attr-for-selected="value">
                             <template is="dom-repeat" items="[[_accountsList]]" >
-                                <paper-item index="[[item.id]]" >[[_capatalize(item.method)]] - [[item.name]]</paper-item>
+                                <paper-item value="[[item.id]]" >[[_capatalize(item.method)]] - [[item.name]]</paper-item>
                             </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
@@ -115,120 +115,127 @@
     </template>
 
     <script>
-        /**
-         * `oc-make-payment`
-         * Flash payment element
-         *
-         * @customElement
-         * @polymer
-         * @demo demo/index.html
-         */
-        class OcMakePayment extends Ordercloud.ReduxMixin(Polymer.Element) {
-            static get is() { return 'oc-make-payment'; }
-            static get properties() {
-                return {
-                    _userId: {
-                        type: Number,
-                        statePath:  'identity.user.id',
-                        observer: '_getUserAccounts'
-                    },
-                    _organisationId: {
-                        type: Number,
-                        notify: true,
-                        statePath: 'organisation.id',
-                        observer: '_getOrganisationAccounts'
-                    },
-                    _paymentData: {
-                        type : Object,
-                        value: {}
-                    },
-                    _toOrganisationId: {
-                        type: Number
-                    },
-                    organisation: Object,
-                    _accountList: {
-                        type: Array,
-                        notify: true
-                    },
-                    _loading: {
-                        type: Boolean,
-                        value: false,
-                        notify: true
-                    },
-                    //if the payment failed
-                    error: {
-                        type: Object,
-                        value: {"isError":false},
-                        notify: true
-                    },
+		/**
+		 * `oc-make-payment`
+		 * Flash payment element
+		 *
+		 * @customElement
+		 * @polymer
+		 * @demo demo/index.html
+		 */
+		class OcMakePayment extends Ordercloud.ReduxMixin(Polymer.Element) {
+			static get is() { return 'oc-make-payment'; }
+			static get properties() {
+				return {
+					_userId: {
+						type: Number,
+						statePath:  'identity.user.id',
+						observer: '_getUserAccounts'
+					},
+					_organisationId: {
+						type: Number,
+						notify: true,
+						statePath: 'organisation.id',
+						observer: '_getOrganisationAccounts'
+					},
+					_paymentData: {
+						type : Object,
+						value: {}
+					},
+					_selectedAccountId: {
+						type: Number,
+						value: 3365
+					},
+					_toOrganisationId: {
+						type: Number
+					},
+					organisation: Object,
+					_accountList: {
+						type: Array,
+						notify: true
+					},
+					_loading: {
+						type: Boolean,
+						value: false,
+						notify: true
+					},
+					//if the payment failed
+					error: {
+						type: Object,
+						value: {"isError":false},
+						notify: true
+					},
 					goBackUrl: {
 						type: String,
 						value: "/"
 					}
-                };
-            }
+				};
+			}
 
-            ready() {
-                super.ready();
-                this._init();
-            }
+			ready() {
+				super.ready();
+				this._init();
+			}
 
-            _init() {
-                this._getOrganisationAccounts();
-            }
+			_init() {
+				this._getOrganisationAccounts();
+			}
 
-            _submit() {
+			_submit() {
 
-                if (!this.$.submit.disabled
-                    && this.$.amount.validate()
-                    && this._accountsList.length > 0
-                    && this._paymentData.selectedIndex >= 0) {
+				if (!this.$.submit.disabled
+					&& this.$.amount.validate()
+					&& this._accountsList.length > 0
+					&& this._selectedAccountId) {
 
-                    //disables the button
-                    this._loading = true;
+					//disables the button
+					this._loading = true;
 
-                    //build the data for the api call
-                    let data = {};
-                    data.fromAccountId = this._accountsList[this._paymentData.selectedIndex].id;
-                    data.amount = this._paymentData.amount;
+					//build the data for the api call
+					let data = {};
+					data.fromAccountId = this._selectedAccountId;
+					data.amount = this._paymentData.amount;
 
-                    //passing the type along too know if should display otp page
-                    data.toOrganisationId = this.organisation.id;
+					//passing the type along too know if should display otp page
+					data.toOrganisationId = this.organisation.id;
 
-                    //passing the type along too know if should display otp page
-                    data.method = this._accountsList[this._paymentData.selectedIndex].method;
+					//passing the type along too know if should display otp page
+					for (let i = 0; i < this._accountsList.length; i++) {
+						if (this._accountsList[i].id === this._selectedAccountId)
+							data.method = this._accountsList[i].method
+					}
 
-                    this.dispatchEvent(new CustomEvent('pay-account', {
-                            bubbles: true,
-                            composed: true,
-                            detail: {paymentData: data}
-                        })
-                    );
+					this.dispatchEvent(new CustomEvent('pay-account', {
+							bubbles: true,
+							composed: true,
+							detail: {paymentData: data}
+						})
+					);
 
-                    //reset the inputs
-                    this.$.amount.value = null;
+					//reset the inputs
+					this.$.amount.value = null;
 
-                    //disables the button
-                    this._loading = false;
-                }
-            }
+					//disables the button
+					this._loading = false;
+				}
+			}
 
-            _getOrganisationAccounts(organisationId) {
-                if(this._organisationId) {
-                    this.$.accountsApi.getOrganisationAccounts(organisationId, 'withdraw')
-                        .then(function (accountsRequest) {
-                            this._accountsList = accountsRequest.response.results;
-                        }.bind(this));
-                }
-            }
+			_getOrganisationAccounts(organisationId) {
+				if(this._organisationId) {
+					this.$.accountsApi.getOrganisationAccounts(organisationId, 'withdraw')
+						.then(function (accountsRequest) {
+							this._accountsList = accountsRequest.response.results;
+						}.bind(this));
+				}
+			}
 
-            //Capatalizes a string
-            _capatalize(string){
-                return String(string).charAt(0).toUpperCase() + string.slice(1);
+			//Capatalizes a string
+			_capatalize(string){
+				return String(string).charAt(0).toUpperCase() + string.slice(1);
 
-            }
-        }
+			}
+		}
 
-        window.customElements.define(OcMakePayment.is, OcMakePayment);
-    </script> 
+		window.customElements.define(OcMakePayment.is, OcMakePayment);
+    </script>
 </dom-module>

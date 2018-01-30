@@ -66,6 +66,24 @@
             </template>
             <div class="row">
                 <div class="col-xs-12">
+                    <paper-input id="amount"
+                                 always-float-label
+                                 required
+                                 label="Amount"
+                                 type="number"
+                                 inputmode="numeric"
+                                 name="amount"
+                                 prevent-invalid-input
+                                 value="{{_paymentData.amount}}"
+                                 pattern="\d+(\.\d{1,2})*"
+                                 min="0"
+                                 step="0.01"
+                                 error="Not valid amount">
+                    </paper-input>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
                     <paper-dropdown-menu label="From Account" horizontal-align="left">
                         <paper-listbox id="accountId"
                                        slot="dropdown-content"
@@ -78,22 +96,6 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12">
-                    <paper-input id="amount"
-                                 always-float-label
-                                 required
-                                 label="Amount"
-                                 type="number"
-                                 inputmode="numeric"
-                                 name="amount"
-                                 prevent-invalid-input
-                                 value="{{_paymentData.amount}}"
-                                 pattern="[0-9]*"
-                                 min="0"
-                                 step="0.01"
-                                 error="Not valid amount">
-                    </paper-input>
-                </div>
                 <div class="col-xs-6">
                     Total:
                 </div>

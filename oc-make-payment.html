@@ -22,6 +22,7 @@
                 background: #ffffff;
                 color: #000;
             }
+
             .category-heading {
                 border-top: 1px #cecece solid;
                 border-bottom: 1px #cecece solid;
@@ -33,19 +34,13 @@
                 margin: 10px 0 !important;
             }
 
-            .add-button-row {
-                background: #ffffff;
-                margin: 15px 0;
-            }
-            .add-button {
+            .pay-button {
+                background-color: #e0992f;
                 width: 100%;
-                color: #fff;
-                background: #2BB673;
+                height: 50px;
+                margin: 10px 0;
             }
 
-            .full-width {
-                width:100%;
-            }
             paper-dropdown-menu {
                 width:100%;
             }
@@ -79,7 +74,7 @@
                                  min="0"
                                  step="0.01"
                                  error="Not valid amount">
-                        <div slot="prefix">R </div>
+                        <div id="currencyPrefix" hidden="[[!_showPrefix]]" slot="prefix" style="padding-right: 8px; opacity: 0.3">R</div>
                     </paper-input>
                 </div>
             </div>
@@ -96,9 +91,9 @@
                     </paper-dropdown-menu>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12 text-center add-button-row">
-                    <paper-button id="submit" class="primary add-button" on-click="_submit" disabled$="{{_loading}}">Pay</paper-button>
+            <div class="row category-heading">
+                <div class="col-xs-12 text-center">
+                    <paper-button id="submit" class="pay-button" on-click="_submit" disabled$="{{_loading}}">Pay</paper-button>
                 </div>
             </div>
         </div>
@@ -149,6 +144,11 @@
 						value: false,
 						notify: true
 					},
+					_showPrefix: {
+						type: Boolean,
+						value: false,
+						computed: '_computedShowPrefix(_paymentData.amount)'
+					},
 					//if the payment failed
 					error: {
 						type: Object,
@@ -165,6 +165,10 @@
 			ready() {
 				super.ready();
 				this._init();
+			}
+
+			_computedShowPrefix(amount) {
+				return !!amount;
 			}
 
 			_init() {

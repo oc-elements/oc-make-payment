@@ -10,6 +10,7 @@
 <link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-listbox/paper-listbox.html">
 <link rel="import" href="../oc-core-utils/oc-store.html">
+<link rel="import" href="../oc-input-amount/oc-input-amount.html">
 
 
 <dom-module id="oc-make-payment">
@@ -61,21 +62,10 @@
             </template>
             <div class="row">
                 <div class="col-xs-12">
-                    <paper-input id="amount"
-                                 required
-                                 autofocus
-                                 label="Amount"
-                                 type="number"
-                                 inputmode="numeric"
-                                 name="amount"
-                                 prevent-invalid-input
-                                 value="{{_paymentData.amount}}"
-                                 pattern="\d+(\.\d{1,2})*"
-                                 min="0"
-                                 step="0.01"
-                                 error="Not valid amount">
-                        <div id="currencyPrefix" hidden="[[!_showPrefix]]" slot="prefix" style="padding-right: 8px; opacity: 0.3">R</div>
-                    </paper-input>
+                    <oc-input-amount
+                            amount="{{_amount}}">
+                    </oc-input-amount>
+
                 </div>
             </div>
             <div class="row">
@@ -109,17 +99,17 @@
 		 * @demo demo/index.html
 		 */
 		class OcMakePayment extends Ordercloud.ReduxMixin(Polymer.Element) {
-			static get is() { return 'oc-make-payment'; }
-			static get properties() {
+			static get is() { return 'oc-make-payment';
+			}static get properties() {
 				return {
 					_userId: {
 						type: Number,
 						statePath:  'identity.user.id',
-						observer: '_getUserAccounts'
+
 					},
 					_organisationId: {
 						type: Number,
-						notify: true,
+
 						statePath: 'organisation.id',
 						observer: '_getOrganisationAccounts'
 					},
@@ -127,9 +117,13 @@
 						type : Object,
 						value: {}
 					},
-					_selectedAccountId: {
+					_amount: {
 						type: Number,
-						value: 3365
+						value: {},
+                    },
+                    _selectedAccountId: {
+                        type: Number,
+                        computed: ''
 					},
 					_toOrganisationId: {
 						type: Number
@@ -148,8 +142,7 @@
 						type: Boolean,
 						value: false,
 						computed: '_computedShowPrefix(_paymentData.amount)'
-					},
-					//if the payment failed
+					},//if the payment failed
 					error: {
 						type: Object,
 						value: {"isError":false},
@@ -162,74 +155,74 @@
 				};
 			}
 
-			ready() {
-				super.ready();
-				this._init();
-			}
+            ready() {
+                super.ready();
+                this._init();
+            }
 
 			_computedShowPrefix(amount) {
 				return !!amount;
-			}
-
-			_init() {
+			}_init() {
 				this._getOrganisationAccounts();
 			}
 
-			_submit() {
+            _submit() {
 
-				if (!this.$.submit.disabled
-					&& this.$.amount.validate()
-					&& this._accountsList.length > 0
-					&& this._selectedAccountId) {
+                if (!this.$.submit.disabled
+                    && this.$.amount.validate()
+                    && this._accountsList.length > 0
+                    && this._selectedAccountId) {
 
-					//disables the button
-					this._loading = true;
+                    //disables the button
+                    this._loading = true;
 
-					//build the data for the api call
-					let data = {};
-					data.fromAccountId = this._selectedAccountId;
-					data.amount = this._paymentData.amount;
+                    //build the data for the api call
+                    let data = {};
+                    data.fromAccountId = this._selectedAccountId;
+                    data.amount = this._amount;
 
-					//passing the type along too know if should display otp page
-					data.toOrganisationId = this.organisation.id;
+                    //passing the type along too know if should display otp page
+                    data.toOrganisationId = this.organisation.id;
 
-					//passing the type along too know if should display otp page
-					for (let i = 0; i < this._accountsList.length; i++) {
-						if (this._accountsList[i].id === this._selectedAccountId)
-							data.method = this._accountsList[i].method
-					}
+                    //passing the type along too know if should display otp page
+                    for (let i = 0; i < this._accountsList.length; i++) {
+                        if (this._accountsList[i].id === this._selectedAccountId)
+                            data.method = this._accountsList[i].method
+                    }
 
-					this.dispatchEvent(new CustomEvent('pay-account', {
-							bubbles: true,
-							composed: true,
-							detail: {paymentData: data}
-						})
-					);
+                    this.dispatchEvent(new CustomEvent('pay-account', {
+                            bubbles: true,
+                            composed: true,
+                            detail: {paymentData: data}
+                        })
+                    );
 
-					//reset the inputs
-					this.$.amount.value = null;
+                    //reset the inputs
+                    this.$.amount.value = null;
 
-					//disables the button
-					this._loading = false;
-				}
-			}
+                    //disables the button
+                    this._loading = false;
+                }
+            }
 
-			_getOrganisationAccounts(organisationId) {
-				if(this._organisationId) {
-					this.$.accountsApi.getOrganisationAccounts(organisationId, 'withdraw')
-						.then(function (accountsRequest) {
-							this._accountsList = accountsRequest.response.results;
-						}.bind(this));
-				}
-			}
+            _getOrganisationAccounts(organisationId) {
+                if (this._organisationId) {
+                    this.$.accountsApi.getOrganisationAccounts(organisationId, 'withdraw')
+                        .then(function (accountsRequest) {
+                            this._accountsList = accountsRequest.response.results;
+                        }.bind(this));
+                }
+            }
 
-			//Capatalizes a string
-			_capatalize(string){
-				return String(string).charAt(0).toUpperCase() + string.slice(1);
+            //Capatalizes a string
+            _capatalize(string) {
+                return String(string).charAt(0).toUpperCase() + string.slice(1);
 
-			}
-		}
+            }
 
-		window.customElements.define(OcMakePayment.is, OcMakePayment);
+
+        }
+
+        window.customElements.define(OcMakePayment.is, OcMakePayment);
     </script>
 </dom-module>

@@ -90,86 +90,84 @@
     </template>
 
     <script>
-		/**
-		 * `oc-make-payment`
-		 * Flash payment element
-		 *
-		 * @customElement
-		 * @polymer
-		 * @demo demo/index.html
-		 */
-		class OcMakePayment extends Ordercloud.ReduxMixin(Polymer.Element) {
-			static get is() { return 'oc-make-payment';
-			}static get properties() {
-				return {
-					_userId: {
-						type: Number,
-						statePath:  'identity.user.id',
+        /**
+         * `oc-make-payment`
+         * Flash payment element
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class OcMakePayment extends Ordercloud.ReduxMixin(Polymer.Element) {
+            static get is() { return 'oc-make-payment';
+            }static get properties() {
+                return {
+                    _userId: {
+                        type: Number,
+                        statePath:  'identity.user.id',
 
-					},
-					_organisationId: {
-						type: Number,
+                    },
+                    _organisationId: {
+                        type: Number,
 
-						statePath: 'organisation.id',
-						observer: '_getOrganisationAccounts'
-					},
-					_paymentData: {
-						type : Object,
-						value: {}
-					},
-					_amount: {
-						type: Number,
-						value: {},
+                        statePath: 'organisation.id',
+                        observer: '_getOrganisationAccounts'
+                    },
+                    _paymentData: {
+                        type : Object,
+                        value: {}
+                    },
+                    _amount: {
+                        type: Number,
                     },
                     _selectedAccountId: {
                         type: Number,
                         computed: ''
-					},
-					_toOrganisationId: {
-						type: Number
-					},
-					organisation: Object,
-					_accountList: {
-						type: Array,
-						notify: true
-					},
-					_loading: {
-						type: Boolean,
-						value: false,
-						notify: true
-					},
-					_showPrefix: {
-						type: Boolean,
-						value: false,
-						computed: '_computedShowPrefix(_paymentData.amount)'
-					},//if the payment failed
-					error: {
-						type: Object,
-						value: {"isError":false},
-						notify: true
-					},
-					goBackUrl: {
-						type: String,
-						value: "/"
-					}
-				};
-			}
+                    },
+                    _toOrganisationId: {
+                        type: Number
+                    },
+                    organisation: Object,
+                    _accountList: {
+                        type: Array,
+                        notify: true
+                    },
+                    _loading: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    },
+                    _showPrefix: {
+                        type: Boolean,
+                        value: false,
+                        computed: '_computedShowPrefix(_paymentData.amount)'
+                    },//if the payment failed
+                    error: {
+                        type: Object,
+                        value: {"isError":false},
+                        notify: true
+                    },
+                    goBackUrl: {
+                        type: String,
+                        value: "/"
+                    }
+                };
+            }
 
             ready() {
                 super.ready();
                 this._init();
             }
 
-			_computedShowPrefix(amount) {
-				return !!amount;
-			}_init() {
-				this._getOrganisationAccounts();
-			}
+            _computedShowPrefix(amount) {
+                return !!amount;
+            }_init() {
+                this._getOrganisationAccounts();
+            }
 
             _submit() {
 
                 if (!this.$.submit.disabled
-                    && this.$.amount.validate()
                     && this._accountsList.length > 0
                     && this._selectedAccountId) {
 
@@ -198,7 +196,7 @@
                     );
 
                     //reset the inputs
-                    this.$.amount.value = null;
+                    this._amount = 0;
 
                     //disables the button
                     this._loading = false;

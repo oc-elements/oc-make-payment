@@ -135,7 +135,7 @@
 					},
 					_selectedAccountId: {
 						type: Number,
-						computed: ''
+						computed: '_defaultAccount(_accountList)'
 					},
 					_toOrganisationId: {
 						type: Number
@@ -182,8 +182,10 @@
 				this._getOrganisationAccounts();
 			}
 
-			_submit() {
-				this.$.confirm.open();
+            //finds the shop to shop account and set as the default selected
+            _defaultAccount(accountList){
+               return  accountList.filter(account => account.method === 'System Account').pop().id;
+            }_submit() {this.$.confirm.open();
 			}
 
 			_makePayment() {
@@ -224,7 +226,7 @@
 			}
 
 			_getOrganisationAccounts(organisationId) {
-				if (this._organisationId) {
+				if ((this._organisationId) &&(this._organisationId > 0)) {
 					this.$.accountsApi.getOrganisationAccounts(organisationId, 'withdraw')
 						.then(function (accountsRequest) {
 							this._accountsList = accountsRequest.response.results;

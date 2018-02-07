@@ -100,146 +100,151 @@
     </template>
 
     <script>
-		/**
-		 * `oc-make-payment`
-		 * Flash payment element
-		 *
-		 * @customElement
-		 * @polymer
-		 * @demo demo/index.html
-		 */
-		class OcMakePayment extends Ordercloud.ReduxMixin(Polymer.Element) {
-			static get is() {
-				return 'oc-make-payment';
-			}
+        /**
+         * `oc-make-payment`
+         * Flash payment element
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class OcMakePayment extends Ordercloud.ReduxMixin(Polymer.Element) {
+            static get is() {
+                return 'oc-make-payment';
+            }
 
-			static get properties() {
-				return {
-					_userId: {
-						type: Number,
-						statePath: 'identity.user.id',
+            static get properties() {
+                return {
+                    _userId: {
+                        type: Number,
+                        statePath: 'identity.user.id',
 
-					},
-					_organisationId: {
-						type: Number,
+                    },
+                    _organisationId: {
+                        type: Number,
 
-						statePath: 'organisation.id',
-						observer: '_getOrganisationAccounts'
-					},
-					_paymentData: {
-						type: Object,
-						value: {}
-					},
-					_amount: {
-						type: Number,
-					},
-					_selectedAccountId: {
-						type: Number,
-						computed: '_defaultAccount(_accountList)'
-					},
-					_toOrganisationId: {
-						type: Number
-					},
-					organisation: Object,
-					_accountList: {
-						type: Array,
-						notify: true
-					},
-					_loading: {
-						type: Boolean,
-						value: false,
-						notify: true
-					},
-					_showPrefix: {
-						type: Boolean,
-						value: false,
-						computed: '_computedShowPrefix(_paymentData.amount)'
-					},//if the payment failed
-					error: {
-						type: Object,
-						value: {"isError": false},
-						notify: true
-					},
-					goBackUrl: {
-						type: String,
-						value: "/"
-					}
-				};
-			}
+                        statePath: 'organisation.id',
+                        observer: '_getOrganisationAccounts'
+                    },
+                    _paymentData: {
+                        type: Object,
+                        value: {}
+                    },
+                    _amount: {
+                        type: Number,
+                    },
+                    _selectedAccountId: {
+                        type: Number
+                    },
+                    _toOrganisationId: {
+                        type: Number
+                    },
+                    organisation: Object,
+                    _accountList: {
+                        type: Array,
+                        notify: true
+                    },
+                    _loading: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    },
+                    _showPrefix: {
+                        type: Boolean,
+                        value: false,
+                        computed: '_computedShowPrefix(_paymentData.amount)'
+                    },//if the payment failed
+                    error: {
+                        type: Object,
+                        value: {"isError": false},
+                        notify: true
+                    },
+                    goBackUrl: {
+                        type: String,
+                        value: "/"
+                    }
+                };
+            }
 
-			ready() {
-				super.ready();
-				this.addEventListener('account-payment', (e) => this._makePayment(e));
+            ready() {
+                super.ready();
+                this.addEventListener('account-payment', (e) => this._makePayment(e));
 
-				this._init();
-			}
+                this._init();
+            }
 
-			_computedShowPrefix(amount) {
-				return !!amount;
-			}
+            _computedShowPrefix(amount) {
+                return !!amount;
+            }
 
-			_init() {
-				this._getOrganisationAccounts();
-			}
+            _init() {
+                this._getOrganisationAccounts();
+            }
 
             //finds the shop to shop account and set as the default selected
-            _defaultAccount(accountList){
-               return  accountList.filter(account => account.method === 'System Account').pop().id;
-            }_submit() {this.$.confirm.open();
-			}
+            _defaultAccount(accountList) {
+                if (accountList) {
+                    this._selectedAccountId = accountList.filter(account => account.method === 'System Account').pop().id;
+                }
+            }
 
-			_makePayment() {
-				if (!this.$.submit.disabled
-					&& this._accountsList.length > 0
-					&& this._selectedAccountId) {
+            _submit() {
+                this.$.confirm.open();
+            }
 
-					//disables the button
-					this._loading = true;
+            _makePayment() {
+                if (!this.$.submit.disabled
+                    && this._accountsList.length > 0
+                    && this._selectedAccountId) {
 
-					//build the data for the api call
-					let data = {};
-					data.fromAccountId = this._selectedAccountId;
-					data.amount = this._amount;
+                    //disables the button
+                    this._loading = true;
 
-					//passing the type along too know if should display otp page
-					data.toOrganisationId = this.organisation.id;
+                    //build the data for the api call
+                    let data = {};
+                    data.fromAccountId = this._selectedAccountId;
+                    data.amount = this._amount;
 
-					//passing the type along too know if should display otp page
-					for (let i = 0; i < this._accountsList.length; i++) {
-						if (this._accountsList[i].id === this._selectedAccountId)
-							data.method = this._accountsList[i].method
-					}
+                    //passing the type along too know if should display otp page
+                    data.toOrganisationId = this.organisation.id;
 
-					this.dispatchEvent(new CustomEvent('pay-account', {
-							bubbles: true,
-							composed: true,
-							detail: {paymentData: data}
-						})
-					);
+                    //passing the type along too know if should display otp page
+                    for (let i = 0; i < this._accountsList.length; i++) {
+                        if (this._accountsList[i].id === this._selectedAccountId)
+                            data.method = this._accountsList[i].method
+                    }
 
-					//reset the inputs
-					this._amount = 0;
+                    this.dispatchEvent(new CustomEvent('pay-account', {
+                            bubbles: true,
+                            composed: true,
+                            detail: {paymentData: data}
+                        })
+                    );
 
-					//disables the button
-					this._loading = false;
-				}
-			}
+                    //reset the inputs
+                    this._amount = 0;
 
-			_getOrganisationAccounts(organisationId) {
-				if ((this._organisationId) &&(this._organisationId > 0)) {
-					this.$.accountsApi.getOrganisationAccounts(organisationId, 'withdraw')
-						.then(function (accountsRequest) {
-							this._accountsList = accountsRequest.response.results;
-						}.bind(this));
-				}
-			}
+                    //disables the button
+                    this._loading = false;
+                }
+            }
 
-			//Capatalizes a string
-			_capatalize(string) {
-				return String(string).charAt(0).toUpperCase() + string.slice(1);
-			}
-		}
+            _getOrganisationAccounts(organisationId) {
+                if ((this._organisationId) && (this._organisationId > 0)) {
+                    this.$.accountsApi.getOrganisationAccounts(organisationId, 'withdraw')
+                        .then(function (accountsRequest) {
+                            this._accountsList = accountsRequest.response.results;
+                            this._defaultAccount(this._accountsList);
+                        }.bind(this));
+                }
+            }
 
-		window.customElements.define(OcMakePayment.is, OcMakePayment);
+            //Capatalizes a string
+            _capatalize(string) {
+                return String(string).charAt(0).toUpperCase() + string.slice(1);
+            }
+        }
+
+        window.customElements.define(OcMakePayment.is, OcMakePayment);
     </script>
 </dom-module>

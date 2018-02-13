@@ -65,6 +65,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     <oc-input-amount
+                            id="inputAmount"
                             amount="{{_amount}}">
                     </oc-input-amount>
 
@@ -92,8 +93,10 @@
             </div>
 
             <oc-paper-dialog id="confirm"
-                             subject="Account Payment"
-                             body="Are you sure you want to make this payment?"
+                             subject="Confirm"
+                             body="
+                             Pay [[organisation.name]]
+                             [[formatMoneyAmount(_amount)]]?"
                              event-name="account-payment">
             </oc-paper-dialog>
         </div>
@@ -108,7 +111,7 @@
          * @polymer
          * @demo demo/index.html
          */
-        class OcMakePayment extends Ordercloud.ReduxMixin(Polymer.Element) {
+        class OcMakePayment extends Ordercloud.Formatter(Ordercloud.ReduxMixin(Polymer.Element)) {
             static get is() {
                 return 'oc-make-payment';
             }

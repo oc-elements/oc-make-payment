@@ -125,9 +125,7 @@
                     },
                     _organisationId: {
                         type: Number,
-
                         statePath: 'organisation.id',
-                        observer: '_getOrganisationAccounts'
                     },
                     _paymentData: {
                         type: Object,
@@ -143,9 +141,9 @@
                         type: Number
                     },
                     organisation: Object,
-                    _accountList: {
+                    _accountsList: {
                         type: Array,
-                        statePath: 'accounts.available'
+                        statePath: 'accounts.withdraw'
                     },
                     _default: {
                         type: Number,

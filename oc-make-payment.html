@@ -145,7 +145,12 @@
                     organisation: Object,
                     _accountList: {
                         type: Array,
-                        notify: true
+                        statePath: 'accounts.available'
+                    },
+                    _default: {
+                        type: Number,
+                        statePath: 'accounts.default',
+                        observer: '_defaultAccount'
                     },
                     _loading: {
                         type: Boolean,
@@ -172,22 +177,16 @@
             ready() {
                 super.ready();
                 this.addEventListener('account-payment', (e) => this._makePayment(e));
-
-                this._init();
             }
 
             _computedShowPrefix(amount) {
                 return !!amount;
             }
 
-            _init() {
-                this._getOrganisationAccounts();
-            }
-
             //finds the shop to shop account and set as the default selected
-            _defaultAccount(accountList) {
-                if (accountList) {
-                    this._selectedAccountId = accountList.filter(account => account.method === 'System Account').pop().id;
+            _defaultAccount(defaultAccount) {
+                if (defaultAccount) {
+                    this._selectedAccountId = defaultAccount;
                 }
             }
 
@@ -229,16 +228,6 @@
 
                     //disables the button
                     this._loading = false;
-                }
-            }
-
-            _getOrganisationAccounts(organisationId) {
-                if ((this._organisationId) && (this._organisationId > 0)) {
-                    this.$.accountsApi.getOrganisationAccounts(organisationId, 'withdraw')
-                        .then(function (accountsRequest) {
-                            this._accountsList = accountsRequest.response.results;
-                            this._defaultAccount(this._accountsList);
-                        }.bind(this));
                 }
             }
 

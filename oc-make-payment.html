@@ -47,6 +47,12 @@
             paper-dropdown-menu {
                 width: 100%;
             }
+
+            .method-icon {
+                width:16px;
+                height:16px;
+                margin-right:8px;
+            }
         </style>
         <oc-accounts-api id="accountsApi"></oc-accounts-api>
         <div class="container-fluid">
@@ -78,7 +84,7 @@
                                        slot="dropdown-content"
                                        selected="{{_selectedAccountId}}" attr-for-selected="value">
                             <template is="dom-repeat" items="[[_accountsList]]">
-                                <paper-item value="[[item.id]]">[[_capatalize(item.name)]]:&nbsp&nbsp&nbsp&nbsp <span>[[formatMoneyAmount(item.balance)]]</span></span>
+                                <paper-item value="[[item.id]]"><iron-icon icon="[[_computeMethodIcon(item.methodKey)]]" class="method-icon"></iron-icon> [[_capatalize(item.name)]]:&nbsp&nbsp&nbsp&nbsp <span>[[formatMoneyAmount(item.balance)]]</span></span>
                                 </paper-item>
                             </template>
                         </paper-listbox>
@@ -226,6 +232,23 @@
 
                     //disables the button
                     this._loading = false;
+                }
+            }
+
+            _computeMethodIcon(method){
+                switch(method){
+                    case  'system':
+                        return 'custom:camel';
+                        break;
+                    case  'peach_registered_card':
+                        return 'icons:credit-card';
+                        break;
+                    case  'flash_registered_msisdn':
+                        return 'custom:cow';
+                        break;
+                    case  'bank_account':
+                        return 'icons:account-balance';
+                        break;
                 }
             }
 

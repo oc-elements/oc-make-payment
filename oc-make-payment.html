@@ -226,15 +226,16 @@
 							data.method = this._accountsList[i].method
 					}
 
+					// Clear fields after submit
+					this._amount = 0;
+					this.$.beneficiaryRef.value = "";
+
 					this.dispatchEvent(new CustomEvent('pay-account', {
 							bubbles: true,
 							composed: true,
 							detail: {paymentData: data}
 						})
 					);
-
-					//reset the inputs
-					this._amount = 0;
 
 					//disables the button
 					this._loading = false;

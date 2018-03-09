@@ -108,6 +108,7 @@
                              subject="Confirm"
                              body="
                              Pay [[organisation.name]]
+                             from [[_fromSelectedMethod]]
                              [[formatMoneyAmount(_amount)]]?"
                              event-name="account-payment"
                              primary-label="PAY"
@@ -151,6 +152,9 @@
 					_selectedAccountId: {
 						type: Number
 					},
+                    _fromSelectedMethod: {
+                        type: String
+                    },
 					_toOrganisationId: {
 						type: Number
 					},
@@ -203,6 +207,10 @@
 			}
 
 			_submit() {
+                for (let i = 0; i < this._accountsList.length; i++) {
+                    if (this._accountsList[i].id === this._selectedAccountId)
+                        this._fromSelectedMethod = this._accountsList[i].name;
+                }
 				this.$.confirm.open();
 			}
 

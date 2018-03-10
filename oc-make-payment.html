@@ -207,10 +207,8 @@
 			}
 
 			_submit() {
-                for (let i = 0; i < this._accountsList.length; i++) {
-                    if (this._accountsList[i].id === this._selectedAccountId)
-                        this._fromSelectedMethod = this._accountsList[i].name;
-                }
+				//find the account name
+				this._fromSelectedMethod = this._accountsList.filter(account => account.id === this._selectedAccountId).pop().name;
 				this.$.confirm.open();
 			}
 

@@ -12,12 +12,13 @@
 <link rel="import" href="../oc-core-utils/oc-store.html">
 <link rel="import" href="../oc-input-amount/oc-input-amount.html">
 <link rel="import" href="../oc-paper-dialog/oc-paper-dialog.html">
+<link rel="import" href="../../src/oc-button-styles.html">
 
 
 <dom-module id="oc-make-payment">
     <template>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <style include="shop-button" is="custom-style">
+        <style include="shop-button oc-button-styles" is="custom-style">
 
             :host {
                 display: block;
@@ -35,13 +36,6 @@
             h3 {
                 font-size: 1.13em !important;
                 margin: 10px 0 !important;
-            }
-
-            .pay-button {
-                background-color: #e0992f;
-                width: 100%;
-                height: 50px;
-                margin: 10px 0;
             }
 
             paper-dropdown-menu {
@@ -99,7 +93,7 @@
             </div>
             <div class="row category-heading">
                 <div class="col-xs-12 text-center">
-                    <paper-button id="submit" class="pay-button" on-click="_submit" disabled$="{{_loading}}">Pay
+                    <paper-button id="submit" class="primary-button" on-click="_submit" disabled$="{{_loading}}">Pay
                     </paper-button>
                 </div>
             </div>

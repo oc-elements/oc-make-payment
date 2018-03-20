@@ -84,7 +84,7 @@
                                        slot="dropdown-content"
                                        selected="{{_selectedAccountId}}" attr-for-selected="value">
                             <template is="dom-repeat" items="[[_accountsList]]">
-                                <paper-item value="[[item.id]]"><iron-icon icon="[[_computeMethodIcon(item.methodKey)]]" class="method-icon"></iron-icon> [[_capatalize(item.name)]]:&nbsp&nbsp&nbsp&nbsp <span>[[formatMoneyAmount(item.balance)]]</span></span>
+                                <paper-item value="[[item.id]]"><iron-icon icon="[[_computeMethodIcon(item.methodKey)]]" class="method-icon"></iron-icon> [[_capatalize(item.name)]]</span>
                                 </paper-item>
                             </template>
                         </paper-listbox>

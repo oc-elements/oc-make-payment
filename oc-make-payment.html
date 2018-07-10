@@ -17,97 +17,88 @@
 
 
 <dom-module id="oc-make-payment">
-    <template>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <style include="shop-button oc-button-styles" is="custom-style">
+	<template>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<style include="shop-button oc-button-styles" is="custom-style">
+			:host {
+				display: block;
+				background: #ffffff;
+				color: #000;
+			}
 
-            :host {
-                display: block;
-                background: #ffffff;
-                color: #000;
-            }
+			.category-heading {
+				border-top: 1px #cecece solid;
+				border-bottom: 1px #cecece solid;
+				background: #f8f8f8;
+				color: #000;
+			}
 
-            .category-heading {
-                border-top: 1px #cecece solid;
-                border-bottom: 1px #cecece solid;
-                background: #f8f8f8;
-                color: #000;
-            }
+			h3 {
+				font-size: 1.13em !important;
+				margin: 10px 0 !important;
+			}
 
-            h3 {
-                font-size: 1.13em !important;
-                margin: 10px 0 !important;
-            }
+			paper-dropdown-menu {
+				width: 100%;
+			}
 
-            paper-dropdown-menu {
-                width: 100%;
-            }
+			.method-icon {
+				width: 16px;
+				height: 16px;
+				margin-right: 8px;
+			}
+		</style>
+		<oc-accounts-api id="accountsApi"></oc-accounts-api>
+		<oc-form-container header="Pay [[organisation.name]]">
+			<template is="dom-if" if="[[error.isError]]">
+				<div class="row">
+					<div class="col-xs-12">
+						<p class="error">
+							<b>Payment Failed!</b> - [[error.message]]</p>
+					</div>
+				</div>
+			</template>
+			<div class="row">
+				<div class="col-xs-12">
+					<oc-input-amount id="inputAmount" amount="{{_amount}}">
+					</oc-input-amount>
 
-            .method-icon {
-                width:16px;
-                height:16px;
-                margin-right:8px;
-            }
-        </style>
-        <oc-accounts-api id="accountsApi"></oc-accounts-api>
-        <oc-form-container header="Pay [[organisation.name]]">
-            <template is="dom-if" if="[[error.isError]]">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <p class="error"><b>Payment Failed!</b> - [[error.message]]</p>
-                    </div>
-                </div>
-            </template>
-            <div class="row">
-                <div class="col-xs-12">
-                    <oc-input-amount
-                            id="inputAmount"
-                            amount="{{_amount}}">
-                    </oc-input-amount>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<paper-input id="beneficiaryRef" label="Reference"></paper-input>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<paper-dropdown-menu label="From Account" horizontal-align="left">
+						<paper-listbox id="accountId" slot="dropdown-content" selected="{{_selectedAccountId}}" attr-for-selected="value">
+							<template is="dom-repeat" items="[[_accountsList]]">
+								<paper-item value="[[item.id]]">
+									<iron-icon icon="[[_computeMethodIcon(item.methodKey)]]" class="method-icon"></iron-icon> [[_capatalize(item.name)]]</span>
+								</paper-item>
+							</template>
+						</paper-listbox>
+					</paper-dropdown-menu>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<paper-button id="submit" class="primary-button" on-click="_submit" disabled$="{{_loading}}">Pay
+					</paper-button>
+				</div>
+			</div>
 
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <paper-input id="beneficiaryRef" label="Reference"
-                                 inputmode="numeric"></paper-input>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <paper-dropdown-menu label="From Account" horizontal-align="left">
-                        <paper-listbox id="accountId"
-                                       slot="dropdown-content"
-                                       selected="{{_selectedAccountId}}" attr-for-selected="value">
-                            <template is="dom-repeat" items="[[_accountsList]]">
-                                <paper-item value="[[item.id]]"><iron-icon icon="[[_computeMethodIcon(item.methodKey)]]" class="method-icon"></iron-icon> [[_capatalize(item.name)]]</span>
-                                </paper-item>
-                            </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <paper-button id="submit" class="primary-button" on-click="_submit" disabled$="{{_loading}}">Pay
-                    </paper-button>
-                </div>
-            </div>
-
-            <oc-paper-dialog id="confirm"
-                             subject="Confirm Payment"
-                             body="
+			<oc-paper-dialog id="confirm" subject="Confirm Payment" body="
                              To: [[organisation.name]]
                              From: [[_fromSelectedMethod]]
-                             Amount: [[formatMoneyAmount(_amount)]]"
-                             event-name="account-payment"
-                             primary-label="PAY"
-                             secondary-label="CANCEL">
-            </oc-paper-dialog>
-        </oc-form-container>
-    </template>
+                             Amount: [[formatMoneyAmount(_amount)]]" event-name="account-payment" primary-label="PAY" secondary-label="CANCEL">
+			</oc-paper-dialog>
+		</oc-form-container>
+	</template>
 
-    <script>
+	<script>
         /**
          * `oc-make-payment`
          * Flash payment element
@@ -116,154 +107,154 @@
          * @polymer
          * @demo demo/index.html
          */
-        class OcMakePayment extends Ordercloud.Formatter(Ordercloud.ReduxMixin(Polymer.Element)) {
-            static get is() {
-                return 'oc-make-payment';
-            }
+		class OcMakePayment extends Ordercloud.Formatter(Ordercloud.ReduxMixin(Polymer.Element)) {
+			static get is() {
+				return 'oc-make-payment';
+			}
 
-            static get properties() {
-                return {
-                    _userId: {
-                        type: Number,
-                        statePath: 'identity.user.id',
+			static get properties() {
+				return {
+					_userId: {
+						type: Number,
+						statePath: 'identity.user.id',
 
-                    },
-                    _organisationId: {
-                        type: Number,
-                        statePath: 'organisation.id',
-                    },
-                    _paymentData: {
-                        type: Object,
-                        value: {}
-                    },
-                    _amount: {
-                        type: Number,
-                    },
-                    _selectedAccountId: {
-                        type: Number
-                    },
-                    _fromSelectedMethod: {
-                        type: String
-                    },
-                    _toOrganisationId: {
-                        type: Number
-                    },
-                    organisation: Object,
-                    _accountsList: {
-                        type: Array,
-                        statePath: 'accounts.withdraw'
-                    },
-                    _default: {
-                        type: Number,
-                        statePath: 'accounts.default',
-                        observer: '_defaultAccount'
-                    },
-                    _loading: {
-                        type: Boolean,
-                        value: false,
-                        notify: true
-                    },
-                    _showPrefix: {
-                        type: Boolean,
-                        value: false,
-                        computed: '_computedShowPrefix(_paymentData.amount)'
-                    },//if the payment failed
-                    error: {
-                        type: Object,
-                        value: {"isError": false},
-                        notify: true
-                    },
-                    goBackUrl: {
-                        type: String,
-                        value: "/"
-                    }
-                };
-            }
+					},
+					_organisationId: {
+						type: Number,
+						statePath: 'organisation.id',
+					},
+					_paymentData: {
+						type: Object,
+						value: {}
+					},
+					_amount: {
+						type: Number,
+					},
+					_selectedAccountId: {
+						type: Number
+					},
+					_fromSelectedMethod: {
+						type: String
+					},
+					_toOrganisationId: {
+						type: Number
+					},
+					organisation: Object,
+					_accountsList: {
+						type: Array,
+						statePath: 'accounts.withdraw'
+					},
+					_default: {
+						type: Number,
+						statePath: 'accounts.default',
+						observer: '_defaultAccount'
+					},
+					_loading: {
+						type: Boolean,
+						value: false,
+						notify: true
+					},
+					_showPrefix: {
+						type: Boolean,
+						value: false,
+						computed: '_computedShowPrefix(_paymentData.amount)'
+					},//if the payment failed
+					error: {
+						type: Object,
+						value: { "isError": false },
+						notify: true
+					},
+					goBackUrl: {
+						type: String,
+						value: "/"
+					}
+				};
+			}
 
-            ready() {
-                super.ready();
-                this.addEventListener('account-payment', (e) => this._makePayment(e));
-            }
+			ready() {
+				super.ready();
+				this.addEventListener('account-payment', (e) => this._makePayment(e));
+			}
 
-            _computedShowPrefix(amount) {
-                return !!amount;
-            }
+			_computedShowPrefix(amount) {
+				return !!amount;
+			}
 
-            //finds the shop to shop account and set as the default selected
-            _defaultAccount(defaultAccount) {
-                if (defaultAccount) {
-                    this._selectedAccountId = defaultAccount;
-                }
-            }
+			//finds the shop to shop account and set as the default selected
+			_defaultAccount(defaultAccount) {
+				if (defaultAccount) {
+					this._selectedAccountId = defaultAccount;
+				}
+			}
 
-            _submit() {
-                //find the account name
-                this._fromSelectedMethod = this._accountsList.filter(account => account.id === this._selectedAccountId).pop().name;
-                this.$.confirm.open();
-            }
+			_submit() {
+				//find the account name
+				this._fromSelectedMethod = this._accountsList.filter(account => account.id === this._selectedAccountId).pop().name;
+				this.$.confirm.open();
+			}
 
-            _makePayment() {
-                if (!this.$.submit.disabled
-                    && this._accountsList.length > 0
-                    && this._selectedAccountId) {
+			_makePayment() {
+				if (!this.$.submit.disabled
+					&& this._accountsList.length > 0
+					&& this._selectedAccountId) {
 
-                    //disables the button
-                    this._loading = true;
+					//disables the button
+					this._loading = true;
 
-                    //build the data for the api call
-                    let data = {};
-                    data.fromAccountId = this._selectedAccountId;
-                    data.amount = this._amount;
-                    data.beneficiaryReference = this.$.beneficiaryRef.value;
+					//build the data for the api call
+					let data = {};
+					data.fromAccountId = this._selectedAccountId;
+					data.amount = this._amount;
+					data.beneficiaryReference = this.$.beneficiaryRef.value;
 
-                    //passing the type along too know if should display otp page
-                    data.toOrganisationId = this.organisation.id;
+					//passing the type along too know if should display otp page
+					data.toOrganisationId = this.organisation.id;
 
-                    //passing the type along too know if should display otp page
-                    for (let i = 0; i < this._accountsList.length; i++) {
-                        if (this._accountsList[i].id === this._selectedAccountId)
-                            data.method = this._accountsList[i].method
-                    }
+					//passing the type along too know if should display otp page
+					for (let i = 0; i < this._accountsList.length; i++) {
+						if (this._accountsList[i].id === this._selectedAccountId)
+							data.method = this._accountsList[i].method
+					}
 
-                    // Clear fields after submit
-                    this._amount = 0;
-                    this.$.beneficiaryRef.value = "";
+					// Clear fields after submit
+					this._amount = 0;
+					this.$.beneficiaryRef.value = "";
 
-                    this.dispatchEvent(new CustomEvent('pay-account', {
-                            bubbles: true,
-                            composed: true,
-                            detail: {paymentData: data}
-                        })
-                    );
+					this.dispatchEvent(new CustomEvent('pay-account', {
+						bubbles: true,
+						composed: true,
+						detail: { paymentData: data }
+					})
+					);
 
-                    //disables the button
-                    this._loading = false;
-                }
-            }
+					//disables the button
+					this._loading = false;
+				}
+			}
 
-            _computeMethodIcon(method){
-                switch(method){
-                    case  'system':
-                        return 'custom:camel';
-                        break;
-                    case  'peach_registered_card':
-                        return 'icons:credit-card';
-                        break;
-                    case  'flash_registered_msisdn':
-                        return 'custom:cow';
-                        break;
-                    case  'bank_account':
-                        return 'icons:account-balance';
-                        break;
-                }
-            }
+			_computeMethodIcon(method) {
+				switch (method) {
+					case 'system':
+						return 'custom:camel';
+						break;
+					case 'peach_registered_card':
+						return 'icons:credit-card';
+						break;
+					case 'flash_registered_msisdn':
+						return 'custom:cow';
+						break;
+					case 'bank_account':
+						return 'icons:account-balance';
+						break;
+				}
+			}
 
-            //Capatalizes a string
-            _capatalize(string) {
-                return String(string).charAt(0).toUpperCase() + string.slice(1);
-            }
-        }
+			//Capatalizes a string
+			_capatalize(string) {
+				return String(string).charAt(0).toUpperCase() + string.slice(1);
+			}
+		}
 
-        window.customElements.define(OcMakePayment.is, OcMakePayment);
-    </script>
+		window.customElements.define(OcMakePayment.is, OcMakePayment);
+	</script>
 </dom-module>

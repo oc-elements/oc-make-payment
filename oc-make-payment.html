@@ -60,19 +60,19 @@
 			</template>
 			<div class="row">
 				<div class="col-xs-12">
-					<oc-input-amount id="inputAmount" amount="{{_amount}}">
+					<oc-input-amount id="inputAmount" amount="{{_amount}}" tabindex="1">
 					</oc-input-amount>
 
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-xs-12">
-					<paper-input id="beneficiaryRef" label="Reference"></paper-input>
+					<paper-input id="beneficiaryRef" label="Reference" tabindex="2"></paper-input>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-xs-12">
-					<paper-dropdown-menu label="From Account" horizontal-align="left">
+					<paper-dropdown-menu label="From Account" horizontal-align="left" tabindex="3">
 						<paper-listbox id="accountId" slot="dropdown-content" selected="{{_selectedAccountId}}" attr-for-selected="value">
 							<template is="dom-repeat" items="[[_accountsList]]">
 								<paper-item value="[[item.id]]">
@@ -85,7 +85,7 @@
 			</div>
 			<div class="row">
 				<div class="col-xs-12">
-					<paper-button id="submit" class="primary-button" on-click="_submit" disabled$="{{_loading}}">Pay
+					<paper-button id="submit" class="primary-button" on-click="_submit" disabled$="{{_loading}}" tabindex="4">Pay
 					</paper-button>
 				</div>
 			</div>

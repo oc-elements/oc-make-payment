@@ -183,10 +183,6 @@
 				return !!amount;
 			}
 
-			_computedHasValue(amount) {
-				return true;
-			}
-
 			//finds the shop to shop account and set as the default selected
 			_defaultAccount(defaultAccount) {
 				if (defaultAccount) {
@@ -256,7 +252,7 @@
 						return 'dashboard:accounts-white';
 						break;
 					case  'flash_registered_msisdn':
-						return 'cow:cow';
+						return 'custom:cow';
 						break;
 					case 'kazang_registered_account':
 						return 'kazang:kazang';

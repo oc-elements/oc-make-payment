@@ -14,9 +14,11 @@
 <link rel="import" href="../oc-input-amount/oc-input-amount.html">
 <link rel="import" href="../oc-paper-dialog/oc-paper-dialog.html">
 <link rel="import" href="../../src/oc-button-styles.html">
+<link rel="import" href="../oc-toast/oc-toast.html">
 
 
 <dom-module id="oc-make-payment">
+
 	<template>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<style include="shop-button oc-button-styles" is="custom-style">
@@ -48,6 +50,7 @@
 				margin-right: 8px;
 			}
 		</style>
+		<oc-toast id="toast"></oc-toast>
 		<oc-accounts-api id="accountsApi"></oc-accounts-api>
 		<oc-form-container header="Pay [[organisation.name]]">
 			<template is="dom-if" if="[[error.isError]]">
@@ -180,6 +183,10 @@
 				return !!amount;
 			}
 
+			_computedHasValue(amount) {
+				return true;
+			}
+
 			//finds the shop to shop account and set as the default selected
 			_defaultAccount(defaultAccount) {
 				if (defaultAccount) {
@@ -188,9 +195,14 @@
 			}
 
 			_submit() {
-				//find the account name
-				this._fromSelectedMethod = this._accountsList.filter(account => account.id === this._selectedAccountId).pop().name;
-				this.$.confirm.open();
+				if (this._amount > 0) {
+					//find the account name
+					this._fromSelectedMethod = this._accountsList.filter(account => account.id === this._selectedAccountId).pop().name;
+					this.$.confirm.open();
+				}
+				else {
+					this.$.toast.failed("Payment value can't be 0");
+				}
 			}
 
 			_makePayment() {
@@ -244,7 +256,7 @@
 						return 'dashboard:accounts-white';
 						break;
 					case  'flash_registered_msisdn':
-						return 'custom:cow';
+						return 'cow:cow';
 						break;
 					case 'kazang_registered_account':
 						return 'kazang:kazang';
